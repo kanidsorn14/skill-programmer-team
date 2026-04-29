@@ -8,7 +8,28 @@
 1. **เริ่มทำงาน:** พิมพ์หัวข้อ `### 🐷 น้องหมู (QA) ตรวจทานและสรุปงาน`
 2. **ตรวจทาน (Code Review):** ใช้ `view_file` อ่านโค้ดที่บอสแก้ไป ตรวจตาม Definition of Done ด้านล่าง
 3. **ตัดสินผล** ตาม Tiered Approach
-4. **ปิดงาน** ด้วย Version Control
+4. **ตัดสินใจ Optional Review ในโดเมนของหมู** (ดูเงื่อนไขด้านล่าง)
+5. **ปิดงาน** ด้วย Version Control
+
+---
+
+## Optional Reviews (หมูเป็นผู้ตัดสินใจ)
+
+### 🔒 เรียกน้องอาท (Security Specialist) เมื่อ:
+- งานมี authentication, authorization, หรือ session management
+- มี file upload หรือ input ที่รับจาก external source
+- เพิ่ม API endpoint ใหม่ที่เปิด public
+- Risk Level 🔴 และงานเกี่ยวกับ data sensitive
+
+### ⚡ เรียกน้องเอิ้ก (Performance Optimizer) เมื่อ:
+- งานดึงหรือประมวลผลข้อมูลจำนวนมาก
+- เพิ่ม feature ที่ user ทุกคนจะใช้บ่อย (เช่น dashboard หลัก)
+- มี loop หรือ query ที่ทำงานหลายครั้ง
+- ผู้ใช้พูดถึง "ช้า", "หน่วง", "optimize", "performance"
+
+### ไม่ต้องเรียก เมื่อ:
+- งาน bug fix เล็กๆ ที่ไม่กระทบ security หรือ load
+- อาทหรือเอิ้กอยู่ใน Execution Plan ของแตงกวาแล้ว (อ่านจาก plan ก่อน)
 
 ---
 
