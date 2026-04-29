@@ -118,10 +118,17 @@
 ### ขั้นที่ 3 — อัปเดต version.json
 
 - ตรวจสอบว่ามีไฟล์ `version.json` ในโปรเจกต์หรือไม่
-  - ถ้า **มี** → แก้ไขให้เป็นเลข version ใหม่
+  - ถ้า **มี** → แก้ไข field `version` และ `updated` ให้เป็นค่าใหม่
   - ถ้า **ไม่มี** → สร้างไฟล์ `version.json` ใหม่
-- เนื้อหาในไฟล์มีแค่ตัวเลข version เดียว เช่น `1.04`
-- ไฟล์นี้ใช้สำหรับดึงไปแสดงบนหน้าโปรแกรม เช่น PHP อ่านด้วย `file_get_contents('version.json')` จะได้ค่า เช่น `1.2.4`
+- รูปแบบ JSON ที่ถูกต้อง:
+```json
+{
+  "version": "1.2.4",
+  "updated": "2026-04-29"
+}
+```
+- PHP ดึงไปใช้งานด้วย: `json_decode(file_get_contents('version.json'))->version`
+- JavaScript ดึงด้วย: `fetch('version.json').then(r=>r.json()).then(d=>d.version)`
 
 ---
 
@@ -131,3 +138,8 @@
 - version เปลี่ยนจาก `X.Y.Z` → `X.Y.Z`
 - บันทึก CHANGELOG ไว้ที่ไฟล์อะไร
 - `version.json` อัปเดตแล้ว พร้อมใช้แสดงบนหน้าโปรแกรม
+
+### ขั้นที่ 5 — ส่งต่อน้องแทน (บังคับทุกครั้ง)
+
+ส่งสรุปงานทั้งหมดให้ "น้องแทน (Knowledge Keeper)" เพื่อพิจารณาบันทึก Knowledge:
+- บอก task summary, สิ่งที่บอสแก้, issue ที่พบ (ถ้ามี), และ feedback จากผู้ใช้ (ถ้ามี)
