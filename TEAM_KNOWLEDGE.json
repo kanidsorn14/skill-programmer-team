@@ -1,6 +1,29 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "description": "Global Knowledge Base — ทีมโปรแกรมเมอร์ สะสมความรู้ข้ามโปรเจกต์",
-  "last_updated": "",
-  "entries": []
+  "last_updated": "2026-04-30",
+  "entries": [
+    {
+      "id": "K001",
+      "date": "2026-04-30",
+      "project": "finance",
+      "task_summary": "UI Scroll Experience Refinement",
+      "situation": "หน้าเว็บมี double scrollbar ทั้งบน body และ content container พร้อมกัน",
+      "do": "ล็อค body scroll ด้วย `overflow: hidden; height: 100vh;` และใช้ `display: flex; flex-direction: column;` กับ parent containers จากนั้นกำหนด `flex: 1; overflow: auto;` บน content container",
+      "dont": "ห้ามกำหนด `overflow: auto` ทั้ง body และ content container พร้อมกัน เพราะทำให้ browser render scrollbar ซ้อนกัน 2 ชั้น",
+      "root_cause": "Parent และ child ต่างมี overflow: auto พร้อมกัน ทำให้ browser สร้าง scrollbar ซ้อนกัน",
+      "tags": ["CSS", "UI", "scroll", "flexbox", "Bug"]
+    },
+    {
+      "id": "K002",
+      "date": "2026-04-30",
+      "project": "finance",
+      "task_summary": "Global Search Scope Logic",
+      "situation": "Global search override filter เฉพาะ tab เช่น Dashboard แสดงข้อมูลวันอื่นเมื่อมี search term",
+      "do": "ใส่ WHERE clause เฉพาะ tab (เช่น `CAST(created_dtm AS date) = :today` สำหรับ Dashboard) ทุกครั้ง ไม่ว่าจะมี search term หรือไม่",
+      "dont": "ห้ามตัด date filter ออกใน else block ของ search condition สำหรับ tab ที่มีกฎเฉพาะ เพราะทำให้ filter หายไปเมื่อไม่มี keyword",
+      "root_cause": "else block ของ search condition ไม่ได้ include WHERE clause เฉพาะ tab ทำให้ filter ถูกข้ามเมื่อไม่มี search term",
+      "tags": ["MSSQL", "Query", "Bug", "search", "filtering"]
+    }
+  ]
 }

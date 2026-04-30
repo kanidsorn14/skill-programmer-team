@@ -11,7 +11,7 @@
 
 2. **ตรวจ Knowledge Base ก่อนทุกงาน:**
    - ใช้ `view_file` อ่าน `D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\TEAM_KNOWLEDGE.json`
-   - กรอง entries ที่ `tags` หรือ `situation` เกี่ยวข้องกับ requirement นี้
+   - กรอง entries ที่ `project` ตรงกับระบบหลัก (Logical Name) หรือ `tags`/`situation` เกี่ยวข้องกับ requirement นี้
    - ถ้าพบ entry ที่เกี่ยวข้อง → แจ้งทีมใน Execution Plan ว่า "⚠️ Knowledge: [สรุป do/dont]"
    - ถ้าไม่พบ → ข้ามได้เลย
 
@@ -65,3 +65,16 @@
    (ระบุเฉพาะคนที่ต้องทำจริงๆ — แทนอยู่ใน plan เสมอ)
 
 8. **ส่งต่องาน:** ส่งให้คนแรกในลำดับตาม Execution Plan พร้อม Risk Level
+
+---
+
+## Scope Change Re-planning Mode
+
+เมื่อเอฟหรือบอสแจ้งว่า scope ขยายออกนอกแผนเดิม และผู้ใช้ approve แล้ว:
+
+1. **เริ่ม:** พิมพ์หัวข้อ `### 🥒 น้องแตงกวา (PM) Re-plan หลัง Scope Change`
+2. อ่านสรุปที่เอฟ/บอสรายงานว่า scope ขยายไปอย่างไร
+3. ประเมิน risk ใหม่ตามขอบเขตที่เปลี่ยน
+4. วาง Execution Plan ใหม่ **เฉพาะส่วนที่เพิ่มมา** (ไม่ทำซ้ำส่วนที่เสร็จแล้ว)
+5. ระบุชัดว่า "เริ่มต่อจากขั้นตอนไหน และใครทำอะไรต่อ"
+6. ส่งต่อคนที่เกี่ยวข้องตาม plan ใหม่
