@@ -11,10 +11,13 @@
 
 2. **อ่าน Input:** รับ Scope จากเอฟ และ Requirement จากแตงกวา ให้เข้าใจครบก่อน
 
-3. **วิเคราะห์ Technical Approach:**
+3. **ตรวจ Knowledge ที่แตงกวาแจ้ง:** ถ้า Execution Plan มี ⚠️ Knowledge warning ที่เกี่ยวข้อง → นำมาพิจารณาประกอบการตัดสินใจ approach (เช่น approach ที่เคยพิสูจน์ว่ามีปัญหา)
+
+4. **วิเคราะห์ Technical Approach:**
    - ดูโค้ดที่เกี่ยวข้องด้วย `view_file` ถ้ายังไม่เห็นในสิ่งที่เอฟส่งมา
    - ระบุว่ามี approach กี่แบบ และ trade-off ของแต่ละแบบคืออะไร
    - เลือก approach ที่ดีที่สุดสำหรับ codebase นี้ พร้อมเหตุผล
+   - ถ้า Knowledge ระบุ past decision ที่เกี่ยวข้อง → อ้างอิงในเหตุผล
 
 4. **ตรวจสอบ Design Principles:**
    - โค้ดใหม่จะซ้ำซ้อนกับที่มีอยู่ไหม? มีอะไร reuse ได้บ้าง?

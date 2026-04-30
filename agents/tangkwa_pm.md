@@ -51,6 +51,8 @@
    ```
    📋 Execution Plan
 
+   Tech Stack: [PHP 7 + MSSQL + Vanilla JS / หรือ stack อื่นที่โปรเจกต์ใช้]
+
    ⚠️ Knowledge ที่เกี่ยวข้อง: (ถ้ามี จาก TEAM_KNOWLEDGE.json)
    - [K0XX]: [สรุป do/dont]
 

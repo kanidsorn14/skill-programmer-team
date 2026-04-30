@@ -20,6 +20,7 @@
    - ใช้ design system เดิมของโปรเจกต์ (CSS class, color, style ที่มีอยู่แล้ว)
    - ต้องรองรับ mobile หรือแค่ desktop?
    - มีส่วนไหนที่ต้องสอดคล้องกับ UI เดิมที่มีอยู่?
+   - ถ้าแตงกวาแจ้ง ⚠️ Knowledge เกี่ยวกับ UI (เช่น scroll pattern, layout issue) → นำมาใส่ใน constraints ด้วย
 
 ## Output Template (บังคับส่งให้เอฟทุกครั้ง)
 ```
