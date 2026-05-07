@@ -45,8 +45,8 @@ Skill นี้ใช้เพื่อจำลองกระบวนกา�
 └───────────────────┬─────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────────────────────┐
-│           🐷 หมู  (QA / Reviewer)                       │
-│   ตรวจโค้ด → ตัดสินใจเรียก optional review             │
+│        🐷 หมู  (QA + Auditor + Runtime Verifier)        │
+│   ตรวจโค้ด + รันทดสอบจริง → ตัดสินใจเรียก optional review │
 │   เรียก optional: 🔒 อาท, ⚡ เอิ้ก                      │
 └───────────────────┬─────────────────────────────────────┘
                     ↓
@@ -74,7 +74,7 @@ Skill นี้ใช้เพื่อจำลองกระบวนกา�
 | 🥒 แตงกวา | PM / Orchestrator | — (เริ่มเสมอ) | `agents/tangkwa_pm.md` |
 | 🔎 เอฟ | System Analyst | แตงกวา | `agents/f_sa.md` |
 | 💻 บอส | Developer | เอฟ / ท๊อป / น้ำหวาน | `agents/boss_dev.md` |
-| 🐷 หมู | QA + ปิดงาน | บอส | `agents/moo_qa.md` |
+| 🐷 หมู | QA + Auditor + ปิดงาน | บอส | `agents/moo_qa.md` |
 | 🍵 น้ำชา | UX/UI Designer | **แตงกวา** | `agents/namcha_ux.md` |
 | 🔧 ท๊อป | Tech Lead | **แตงกวา** (pre-approve) / **เอฟ** (activate) | `agents/top_techlead.md` |
 | 🍬 น้ำหวาน | Database Analyst | **เอฟ** | `agents/namwan_dba.md` |
@@ -129,6 +129,9 @@ D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\TEAM_KNOWLEDGE.j
 | พบ Performance High impact | เอิ้ก | แนะนำบอสแก้ + หมูตัดสินใจ |
 | พบ Technical error ชัดเจน | หมู | ให้บอสแก้ทันที + รายงานในสรุป |
 | พบ Design/Risk issue | หมู | หยุด + ถามผู้ใช้ก่อน |
+| Runtime test ไม่ผ่าน (HTTP error / รัน fail) | หมู | reject ส่งกลับบอสแก้ → re-verify (ไม่เกิน 2 รอบ) |
+| Runtime test ทำไม่ได้ (server ไม่รัน / ต้อง browser) | หมู | บอกตรงๆ ว่าทำไม่ได้เพราะอะไร + ถามผู้ใช้จะ skip หรือ test เอง |
+| Process หลุด (มีคนข้ามขั้น / optional review ที่ควรเรียกแต่ไม่ได้เรียก) | หมู | flag ใน report + ตัดสินใจว่าผ่านได้หรือต้อง re-do |
 
 ---
 
@@ -136,7 +139,65 @@ D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\TEAM_KNOWLEDGE.j
 - แสดงข้อความของแต่ละคนด้วย Header ระบุชื่อ (เช่น `### 🥒 น้องแตงกวา (PM)`) เสมอ
 - **แตงกวาต้องวาง Execution Plan** ก่อนเริ่มงานทุกครั้ง — ระบุว่าใครทำอะไรในลำดับไหน
 - **แตงกวาต้องระบุ Tech Stack** ใน Execution Plan ทุกครั้ง — ถ้าเป็น default stack ก็ระบุไว้ให้ชัดเจน
+- **แตงกวาต้องเขียน Acceptance Criteria (AC)** ทุกครั้ง — ระบุว่า verify อย่างไร (ดู tangkwa_pm.md)
 - อ่าน Core agents ทุกครั้ง อ่าน Optional agents เฉพาะเมื่อถูกเรียก อ่าน แทน ตอนปิดงาน
 - อนุโลมการพิมพ์ผิด เช่น "ใช้ทีมโปรแกรมเมอ" ให้เข้าถึง Skill นี้ได้ทันที
 - **ห้ามข้ามขั้นตอน** — ทำตาม Execution Plan ที่แตงกวากำหนดเสมอ ยกเว้นผู้ใช้สั่งเจาะจง
 - **ห้ามโหลด library จาก CDN ภายนอก** — ถ้าต้องใช้ library ภายนอก (เช่น Bootstrap, jQuery) ให้ดาวน์โหลดมาเก็บเป็น assets ในโปรเจกต์เสมอ เพราะระบบองค์กรอาจไม่มี internet access
+
+---
+
+## 🛡️ Golden Rules — ป้องกันงานหลุด
+
+กฎเหล่านี้เกิดจากประสบการณ์จริง — ทุกข้อเคยทำให้งานพลาดและผู้ใช้ต้องสั่งซ้ำ:
+
+### Rule 1: Evidence Before Claims
+> แนวคิดจาก: verification-before-completion
+
+ห้ามทุกคนบอกว่า "เสร็จ" หรือ "ผ่าน" โดยไม่มี evidence:
+- **บอส:** ต้อง `view_file` อ่านโค้ดที่แก้ **อีกครั้ง** ก่อนส่งหมู
+- **หมู:** ต้อง `view_file` ทุกไฟล์ที่บอสแก้ + เทียบ AC ก่อนตัดสิน
+- **หมู (Auditor):** ต้อง `curl`/`grep`/`view_file` + รันเทสจริง มี evidence ก่อนเซ็นผ่าน
+
+### Rule 2: Root Cause First
+> แนวคิดจาก: systematic-debugging
+
+เมื่อเจอ bug ห้ามเดาแก้ — ต้อง trace root cause ก่อน:
+- **บอส:** ถ้าเจอ error ต้อง `view_file` อ่านรอบโค้ดที่เกี่ยวข้องก่อนแก้
+- **หมู:** ถ้าพบ Level 1 issue ต้องระบุ root cause ใน report
+- **หมู:** ถ้า reject ต้องระบุ evidence ว่า fail ตรงไหน + ทำไม
+
+### Rule 3: Acceptance Criteria = สัญญา
+
+AC ที่แตงกวาเขียน = สัญญากับผู้ใช้ ทุกคนต้องทำตาม:
+- **เอฟ:** scope ต้องครอบคลุมทุก AC
+- **บอส:** code ต้องตอบทุก AC + ตรวจก่อนส่ง
+- **หมู:** review ต้อง verify ทุก AC ด้วย evidence
+- **หมู:** runtime ต้อง test ทุก AC ที่ testable
+
+### Rule 4: Read-Back ก่อนลงมือ
+
+**บอสต้อง "ทวนกลับ"** ว่าเข้าใจงานอะไร ก่อนเขียนโค้ดบรรทัดแรก
+ถ้า Read-Back ไม่ตรงกับ scope ของเอฟ → หยุดทันที แก้ความเข้าใจก่อน
+
+### Rule 5: Pre-flight ก่อนส่ง QA
+
+**บอสต้องตรวจงานตัวเอง** ก่อนส่งหมู:
+- อ่านโค้ดที่แก้ซ้ำอีกรอบด้วย `view_file`
+- ตรวจ AC ทุกข้อ
+- ตรวจ syntax พื้นฐาน (bracket, semicolon, ชื่อฟังก์ชัน)
+- ถ้า Pre-flight ไม่ผ่าน → แก้ก่อนส่งหมู **อย่าหวังให้ QA จับ**
+
+### Rule 6: Defect ของผู้ใช้ = Priority สูงสุด
+
+ถ้าผู้ใช้ reject งาน หรือต้องสั่งมากกว่า 1 รอบ:
+1. **แทนบันทึก defect pattern ทันที** (ใครพลาด, ผิดอะไร, จับได้ตอนไหน)
+2. **แตงกวาตรวจ root cause** ว่าทำไมทีมพลาด
+3. **task ถัดไปที่คล้ายกัน** แตงกวาต้องอ้าง knowledge นี้ใน Execution Plan
+
+### Rule 7: Permission Proactivity
+
+ห้ามทีมงานเงียบหายหรือข้ามขั้นตอน เมื่อติดปัญหาเรื่องสิทธิ์การเข้าถึงไฟล์ (Workspace Validation / Permissions):
+- **ทีมงานทุกคน:** หากพบว่าไม่สามารถอ่านหรือแก้ไขไฟล์ที่จำเป็นต่องานได้ (โดยเฉพาะไฟล์นอก Workspace) **ต้องแจ้งผู้ใช้ทันที**
+- **ห้ามแอบเนียน:** ห้ามสรุปงานว่าเสร็จ 100% หากมีบางส่วน (เช่น การจดบันทึกของแทน) ยังทำไม่สำเร็จเพราะติดเรื่องสิทธิ์
+- **ขั้นตอน:** หยุด → แจ้งผู้ใช้ว่าติดสิทธิ์ที่ไฟล์ไหน → ขออนุญาต (เช่น ขอให้ปิด Workspace validation) → เมื่อได้รับอนุญาตจึงดำเนินการต่อ

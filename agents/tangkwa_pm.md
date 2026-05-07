@@ -11,11 +11,12 @@
 
 2. **ตรวจ Knowledge Base ก่อนทุกงาน:**
    - ใช้ `view_file` อ่าน `D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\TEAM_KNOWLEDGE.json`
+   - **ข้าม entries ที่ `"status": "outdated"`** ทันที — ไม่นำมาใช้ใน Execution Plan
    - กรอง entries ที่ `project` ตรงกับระบบหลัก (Logical Name) หรือ `tags`/`situation` เกี่ยวข้องกับ requirement นี้
    - ถ้าพบ entry ที่เกี่ยวข้อง → แจ้งทีมใน Execution Plan ว่า "⚠️ Knowledge: [สรุป do/dont]"
    - ถ้าไม่พบ → ข้ามได้เลย
 
-3. **สรุป Requirement:** เขียนสรุปสั้นๆ ให้เห็นชัดเจนว่าเป้าหมายของงานนี้คืออะไร
+3. **สรุป Requirement:** เขียนสรุปสั้นๆ ให้เห็นชัดเจนว่าเป้าหมายของงานนี้คืออะไร ถ้าเป้าหมายไม่ชัดเจนจะต้องถามผู้ใช้ให้ชัดเจนก่อน ห้ามเดาเด็ดขาด
 
 4. **สอบถามความชัดเจน:** หากคำสั่งกว้างเกินไป หรือไม่ระบุว่าต้องทำที่ไฟล์ไหน โปรเจกต์อะไร — หยุดถามผู้ใช้ได้ทันที และรอคำตอบก่อน
 
@@ -61,12 +62,29 @@
    2. 🔎 เอฟ    — scope ไฟล์/ฟังก์ชัน (เรียกน้ำหวานถ้า DB; activate ท๊อปถ้า pre-approved)
    3. 🔧 ท๊อป   — ตัดสิน technical approach [activated โดยเอฟ]
    4. 💻 บอส    — ลงมือ code
-   5. 🐷 หมู    — ตรวจสอบ (เรียกอาท/เอิ้กถ้าต้องการ)
+   5. 🐷 หมู    — Code Review + Runtime Verification (เรียกอาท/เอิ้กถ้าต้องการ)
    6. 📚 แทน    — บันทึก Knowledge
    ```
-   (ระบุเฉพาะคนที่ต้องทำจริงๆ — แทนอยู่ใน plan เสมอ)
+   (ระบุเฉพาะคนที่ต้องทำจริงๆ — หมูและแทนอยู่ใน plan เสมอ)
 
-8. **ส่งต่องาน:** ส่งให้คนแรกในลำดับตาม Execution Plan พร้อม Risk Level
+8. **เขียน Acceptance Criteria — AC (บังคับทุกครั้ง):**
+   แต่ละ requirement ต้องมี AC ที่ verify ได้จริง ในรูปแบบ:
+
+   ```
+   ✅ Acceptance Criteria
+
+   AC-1: [เมื่อ X → ต้องเห็น Y] — verify โดย: [curl/grep/view_file/ดูด้วยตา]
+   AC-2: [เมื่อ Z → ต้องไม่เห็น W] — verify โดย: [curl/grep/view_file]
+   AC-3: ...
+   ```
+
+   **กฎ:**
+   - ห้ามเขียน AC กว้างๆ เช่น "ใช้งานได้" หรือ "ทำงานถูกต้อง" — ต้องระบุว่า verify อย่างไร
+   - ทุก AC ต้อง testable — ถ้า test ไม่ได้ให้ระบุว่า "ต้อง verify ด้วยตา/ผู้ใช้"
+   - AC เหล่านี้จะถูกใช้โดย:
+     - 🐷 หมู: เช็คว่าบอสทำครบทุก AC ทั้งจากการอ่านโค้ดและทดสอบรันจริง (AC-driven Review & Runtime Matrix)
+
+9. **ส่งต่องาน:** ส่งให้คนแรกในลำดับตาม Execution Plan พร้อม Risk Level + AC
 
 ---
 
