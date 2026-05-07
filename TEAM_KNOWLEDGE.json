@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "description": "Global Knowledge Base — ทีมโปรแกรมเมอร์ สะสมความรู้ข้ามโปรเจกต์",
+  "description": "Global Knowledge Base — ทีมโปรแกรมเมอร์ สะสมความรู้ข้ามโปรเจกต์ ห้ามลบข้อมูลเก่าเด็ดขาด",
   "last_updated": "2026-05-07",
   "entries": [
     {
@@ -12,7 +12,13 @@
       "do": "ล็อค body scroll ด้วย `overflow: hidden; height: 100vh;` และใช้ `display: flex; flex-direction: column;` กับ parent containers จากนั้นกำหนด `flex: 1; overflow: auto;` บน content container",
       "dont": "ห้ามกำหนด `overflow: auto` ทั้ง body และ content container พร้อมกัน เพราะทำให้ browser render scrollbar ซ้อนกัน 2 ชั้น",
       "root_cause": "Parent และ child ต่างมี overflow: auto พร้อมกัน ทำให้ browser สร้าง scrollbar ซ้อนกัน",
-      "tags": ["CSS", "UI", "scroll", "flexbox", "Bug"]
+      "tags": [
+        "CSS",
+        "UI",
+        "scroll",
+        "flexbox",
+        "Bug"
+      ]
     },
     {
       "id": "K002",
@@ -23,7 +29,13 @@
       "do": "ใส่ WHERE clause เฉพาะ tab (เช่น `CAST(created_dtm AS date) = :today` สำหรับ Dashboard) ทุกครั้ง ไม่ว่าจะมี search term หรือไม่",
       "dont": "ห้ามตัด date filter ออกใน else block ของ search condition สำหรับ tab ที่มีกฎเฉพาะ เพราะทำให้ filter หายไปเมื่อไม่มี keyword",
       "root_cause": "else block ของ search condition ไม่ได้ include WHERE clause เฉพาะ tab ทำให้ filter ถูกข้ามเมื่อไม่มี search term",
-      "tags": ["MSSQL", "Query", "Bug", "search", "filtering"]
+      "tags": [
+        "MSSQL",
+        "Query",
+        "Bug",
+        "search",
+        "filtering"
+      ]
     },
     {
       "id": "K003",
@@ -34,7 +46,13 @@
       "do": "1. ตรวจบรรทัดว่าง (`trim($row) === ''`) ก่อน parse CSV 2. กำหนดค่าเริ่มต้น (`$var = 0;`) ก่อนใช้ `+=` 3. ใส่ `error_reporting(0);` ที่ API Endpoint 4. Fallback HTTP_HOST เป็น `127.0.0.1` แทน `localhost`",
       "dont": "ห้ามใช้ `array_combine()` โดยไม่เช็คบรรทัดว่าง, ห้ามสะสมค่า (+=) ตัวแปรโดยไม่ประกาศใน PHP 8, และหลีกเลี่ยงใช้ `localhost` สำหรับ API call ภายใน เพราะ IIS อาจไม่ Bind ไว้",
       "root_cause": "Trailing newline ของ CSV กับการสะสมตัวแปรเปล่าทำให้เกิด PHP Warning แทรกเข้ามาในผลลัพธ์ JSON และ localhost ไม่ตอบสนองเมื่อรันด้วย CLI บน IIS",
-      "tags": ["PHP", "API", "JSON", "Bug", "IIS"]
+      "tags": [
+        "PHP",
+        "API",
+        "JSON",
+        "Bug",
+        "IIS"
+      ]
     },
     {
       "id": "K004",
@@ -45,7 +63,13 @@
       "do": "1. ให้ฟังก์ชันดึง Target รายเดือน (เช่น ovk_monthlyTarget) เช็คค่า `target_m{month}` ก่อนเสมอ เพื่อให้สอดคล้องกับ Dashboard 2. หลีกเลี่ยงการใช้ `AND result_value != ''` ใน SQL Query บนคอลัมน์ที่เป็น numeric/float เพราะจะทำให้เกิด Error converting data type varchar to numeric แนะนำให้ดึงข้อมูลออกมาแล้วกรองและแปลงเป็นตัวเลขผ่าน PHP แทน (`trim()`, `is_numeric()`)",
       "dont": "ห้ามใช้ `AND result_value != ''` กับคอลัมน์ตัวเลขใน SQL Server เพราะ SQL จะพยายามแปลง `''` เป็นตัวเลขแล้วระเบิดทันที และห้ามใช้เป้ารายปีมาประเมินผลการดูหน้าจอรายเดือน",
       "root_cause": "1. ฟังก์ชันเดิมใช้เป้าหมายทั้งปีมาเทียบกับผลลัพธ์รายเดือน 2. ความพยายามกันบัค empty string โดยใส่เงื่อนไข `!= ''` ใน SQL ทำให้เกิด HTTP 500 เพราะคอลัมน์ result_value ใน DB เป็นชนิดตัวเลข",
-      "tags": ["PHP", "KPI", "Logic", "Bug", "MSSQL"]
+      "tags": [
+        "PHP",
+        "KPI",
+        "Logic",
+        "Bug",
+        "MSSQL"
+      ]
     },
     {
       "id": "K005",
@@ -56,7 +80,13 @@
       "do": "1. เพิ่มแผ่นงาน (Sheet) `RESULT_VALUE` แยกต่างหากสำหรับจัดการค่าตัวแปรแบบ 1 แถวต่อ 1 ตัวแปร 2. ใช้ `in_array('column_name', $headers)` ทุกครั้งเพื่อรักษาความสามารถในการอิมพอร์ตไฟล์ Excel เวอร์ชั่นเก่า (Backward Compatibility)",
       "dont": "ห้ามฝังค่าตัวแปรไว้ในคอลัมน์ของชีท RESULTS ถ้าต้องการความสะดวกในการจัดการข้อมูลดิบจำนวนมาก แนะนำให้แยกชีทเพื่อให้โครงสร้างตรงตามฐานข้อมูล",
       "root_cause": "การออกแบบระบบนำเข้าเดิมโฟกาสที่ผลลัพธ์สุดท้าย (result_value) มากกว่าข้อมูลดิบที่มาของผลลัพธ์",
-      "tags": ["Excel", "Import", "Export", "KPI", "Backward Compatibility"]
+      "tags": [
+        "Excel",
+        "Import",
+        "Export",
+        "KPI",
+        "Backward Compatibility"
+      ]
     },
     {
       "id": "K006",
@@ -67,7 +97,13 @@
       "do": "1. ปิด IDE และ Terminal ทั้งหมดที่ค้างอยู่ 2. เข้าไปลบโฟลเดอร์ `.claude/worktrees` ด้วยตัวเอง 3. รันคำสั่ง `git worktree prune` เพื่อเคลียร์ index",
       "dont": "ห้ามสร้าง Git Worktree (เช่นผ่าน skill) ไว้ภายใต้ Directory ของโปรเจกต์โดยตรง เพราะจะทำให้ AI Indexer สแกนไฟล์ซ้ำซ้อนแบบ Infinite Loop จน Memory เต็ม",
       "root_cause": "โฟลเดอร์ `.claude/worktrees/nostalgic-cartwright-5f04d4` มี source code ชุดเต็มซ้อนอยู่ ทำให้ Indexer ของ AI วนลูปอ่านไฟล์ไม่รู้จบ และ Process ที่ค้างจะ Lock โฟลเดอร์ไว้ทำให้ลบผ่าน AI ไม่ได้",
-      "tags": ["Defect Tracking", "CLI", "Git", "Worktree", "Bug"]
+      "tags": [
+        "Defect Tracking",
+        "CLI",
+        "Git",
+        "Worktree",
+        "Bug"
+      ]
     },
     {
       "id": "K007",
@@ -78,7 +114,13 @@
       "do": "1. ใช้ `zoom: 0.9` (หรือสเกลที่เหมาะสม) ใน `@media print` เพื่อบีบเนื้อหาให้พอดีหน้า A4 2. ใช้ `border: none !important` เพื่อซ่อนเส้นตารางเฉพาะเซลล์ที่ต้องการความโปร่ง (เช่น เซลล์ข้อความข้างตัวเลขสรุป) 3. กำหนด `tr { page-break-inside: avoid; }` เพื่อกันแถวตารางขาดครึ่งหน้า",
       "dont": "ห้ามปล่อยให้ตารางรายงานขนาดใหญ่มี padding เยอะเกินไปในโหมดพิมพ์ เพราะจะทำให้ข้อมูลล้นหน้า A4 แนวตั้งได้ง่าย",
       "root_cause": "การแสดงผลบนหน้าจอกับโหมดพิมพ์มีพื้นที่ต่างกัน และตารางที่มีหลายคอลัมน์ต้องการการควบคุมสัดส่วนที่แม่นยำกว่าปกติ",
-      "tags": ["CSS", "Print", "UI", "Report", "Optimization"]
+      "tags": [
+        "CSS",
+        "Print",
+        "UI",
+        "Report",
+        "Optimization"
+      ]
     },
     {
       "id": "K008",
@@ -89,7 +131,13 @@
       "do": "ให้รวมงานที่มีสถานะ Draft และมีการระบุว่าถูก 'ดึงกลับ' (Recall) เข้าไว้ในกลุ่มเดียวกับ 'งานที่ถูกตีกลับ' (Rejected) เพราะมีจุดประสงค์เดียวกันคือต้องการให้ผู้ใช้แก้ไขข้อมูลใหม่",
       "dont": "ห้ามละเลยงานสถานะ Draft ที่มาจากการ Recall เพราะจะทำให้เกิด Visibility Gap ในระบบ Dashboard",
       "root_cause": "การกรองสถานะใน Dashboard เดิมแยก Draft ออกจากระบบกล่องงานหลัก ทำให้งานที่ถูกดึงกลับหายไปจากสายตาผู้ใช้",
-      "tags": ["PHP", "SQL", "Dashboard", "Recall", "User Experience"]
+      "tags": [
+        "PHP",
+        "SQL",
+        "Dashboard",
+        "Recall",
+        "User Experience"
+      ]
     },
     {
       "id": "K009",
@@ -100,7 +148,13 @@
       "do": "1. กำหนด `@page { size: A4 landscape; }` (หรือ portrait) 2. ใช้ `zoom: 0.8` สำหรับแนวนอน หรือ `0.9` สำหรับแนวตั้ง 3. ล็อคความสูงกราฟ (Canvas) ด้วย `!important` (แนวนอนควรใช้ ~200px) 4. เปลี่ยน display ของส่วนสรุปจาก flex เป็น block",
       "dont": "ห้ามปล่อยให้กราฟสูงเกิน 220px ในโหมดแนวนอน และหลีกเลี่ยงการใช้ padding/margin เยอะในโหมดพิมพ์",
       "root_cause": "พื้นที่แนวตั้งของแนวนอนมีจำกัด Browser มักขยายกราฟจนดันตารางไปหน้า 2",
-      "tags": ["CSS", "Print", "Optimization", "Landscape", "UI"]
+      "tags": [
+        "CSS",
+        "Print",
+        "Optimization",
+        "Landscape",
+        "UI"
+      ]
     },
     {
       "id": "K010",
@@ -111,7 +165,13 @@
       "do": "1. ดึงค่า `redirect` จาก `$_POST` มาเก็บไว้ตอนประมวลผล Login 2. ส่งค่ากลับไปใน URL ทุกครั้งที่เกิด Error 3. ในทุกหน้าจอที่มีการเช็คสิทธิ์ (Auth/Access Control) ต้องพ่วง `?redirect=` ไปที่หน้า Login เสมอโดยใช้ `urlencode($_SERVER['REQUEST_URI'])`",
       "dont": "ห้ามใช้ `header('Location: ../login/')` เปล่าๆ โดยไม่มี parameter เพราะจะทำลาย Context ของผู้ใช้ทันที",
       "root_cause": "การเขียน Auth Logic แยกส่วนกันในหลายหน้าจอ (Inconsistent Auth Pattern) ทำให้บางหน้าจอลืมส่ง parameter ที่จำเป็นสำหรับการ Redirect กลับ",
-      "tags": ["PHP", "Authentication", "UX", "Bug", "Redirect"]
+      "tags": [
+        "PHP",
+        "Authentication",
+        "UX",
+        "Bug",
+        "Redirect"
+      ]
     },
     {
       "id": "K011",
@@ -122,7 +182,12 @@
       "do": "ตรวจสอบชื่อคอลัมน์จาก PHP Controller เดิมหรือใช้ query เช็คจาก Production DB เสมอเมื่อเริ่มโปรเจกต์ Migration",
       "dont": "ห้ามสรุปเอาเองว่าชื่อฟิลด์ใน Model จะเหมือนกับที่ตั้งชื่อไว้ในโปรเจกต์ใหม่ ต้องยึดตาม Legacy DB เป็นหลัก",
       "root_cause": "การออกแบบ Model ใน Next.js อ้างอิงจากความเข้าใจใหม่ แต่ Production DB ยังใช้ Schema เดิม",
-      "tags": ["MSSQL", "Migration", "Bug", "Next.js"]
+      "tags": [
+        "MSSQL",
+        "Migration",
+        "Bug",
+        "Next.js"
+      ]
     },
     {
       "id": "K012",
@@ -133,7 +198,12 @@
       "do": "ใช้ Modal แบบ Split View (60/40) โดยแสดง PDF Viewer ฝั่งหนึ่ง และตารางรายละเอียดอีกฝั่งหนึ่ง เพื่อให้ตรวจสอบได้แบบ Side-by-Side",
       "dont": "ห้ามแยกหน้าต่าง PDF ออกเป็น Modal ต่างหากถ้าผู้ใช้ต้องใช้งานข้อมูลทั้งสองส่วนพร้อมกัน",
       "root_cause": "พฤติกรรมผู้ใช้ต้องการการตรวจสอบข้อมูลแบบเทียบเคียง (Direct Comparison)",
-      "tags": ["UI", "UX", "Next.js", "Layout"]
+      "tags": [
+        "UI",
+        "UX",
+        "Next.js",
+        "Layout"
+      ]
     },
     {
       "id": "K013",
@@ -144,7 +214,13 @@
       "do": "แยก Modal ย่อยเป็น Component (RejectModal, ApproveModal) แทนที่จะยัดทุกอย่างใน Modal เดียว ใช้ Transaction ใน API เพื่อ atomic update, stamp เวลาลง document_note เหมือน PHP เดิม",
       "dont": "ห้ามเขียน Reject API แบบง่ายๆ ที่ SET status = FAIL อย่างเดียว ต้อง: 1) ลบ recheck queue, 2) stamp note พร้อมเวลา, 3) set selected → FAIL_Rechk, 4) set non-selected → PASS_Rechk",
       "root_cause": "Business Logic ของการ Reject ซับซ้อนกว่าแค่เปลี่ยน status — ต้อง track ว่า checkpoint ไหนถูก reject พร้อมเหตุผล",
-      "tags": ["Next.js", "Migration", "API", "Business-Logic", "Component-Design"]
+      "tags": [
+        "Next.js",
+        "Migration",
+        "API",
+        "Business-Logic",
+        "Component-Design"
+      ]
     },
     {
       "id": "K014",
@@ -155,7 +231,14 @@
       "do": "1. สร้างไฟล์รายงานแยกสำหรับ Bulk Mode โดยเฉพาะ 2. ใช้ CSS `@media print { .page-break { page-break-after: always; } }` เพื่อแยกหน้า 1 แผนก = 2 แผ่น 3. วนลูปแผนกและดึงข้อมูลเฉพาะที่จำเป็นภายใน Loop เพื่อประหยัด Memory 4. ดึงข้อมูล Action Plan เฉพาะรายการที่ไม่ Achieve เพื่อลดความยาวรายงานหน้า 2",
       "dont": "ห้ามโหลดข้อมูลทุกแผนกลงตัวแปรเดียวแล้ววนลูปแสดงผล เพราะจะทำให้ระบบค้างหากมีแผนกจำนวนมาก และห้ามใช้ตารางเดียวที่ยาวเกินไปโดยไม่คุม Page Break เพราะจะทำให้หัวตารางหายในหน้าถัดไป",
       "root_cause": "การพิมพ์รายงานจำนวนมากต้องการการจัดการ Memory และ CSS Print Layout ที่แม่นยำกว่ารายงานเดี่ยวปกติ",
-      "tags": ["PHP", "CSS", "Print", "ISO", "Bulk", "Layout"]
+      "tags": [
+        "PHP",
+        "CSS",
+        "Print",
+        "ISO",
+        "Bulk",
+        "Layout"
+      ]
     },
     {
       "id": "K015",
@@ -166,7 +249,14 @@
       "do": "1. ลบ attribute `max` ออกหากไม่มีความจำเป็นต้องจำกัดขอบเขตบน 2. หากจำเป็นต้องจำกัด ให้ใช้ค่า Dynamic เช่น `max='<?php echo date('Y')+1; ?>-12-31'` เพื่อให้ขยับตามปีปัจจุบันโดยอัตโนมัติ",
       "dont": "ห้าม Hardcode ปีสิ้นสุด (End Year) ลงในโค้ดโดยตรง (เช่น 2025, 2030) เพราะจะทำให้ระบบ 'ล็อก' เมื่อเวลาผ่านไปจนถึงปีนั้น และต้องกลับมาแก้โค้ดซ้ำซ้อน",
       "root_cause": "การกำหนดขอบเขตวันที่ (Date Picker constraints) แบบ static (Hardcoded string) ทำให้ระบบไม่รองรับการใช้งานระยะยาว",
-      "tags": ["HTML", "PHP", "UI", "Date-Picker", "Hardcode", "Maintenance"]
+      "tags": [
+        "HTML",
+        "PHP",
+        "UI",
+        "Date-Picker",
+        "Hardcode",
+        "Maintenance"
+      ]
     },
     {
       "id": "K016",
@@ -177,7 +267,14 @@
       "do": "1. ใช้เทคนิค **Bulk Fetch**: เขียน SQL ดึงข้อมูลทั้งหมดที่จำเป็นในช่วง Range (เช่น BETWEEN date_start AND date_end) ออกมาครั้งเดียว 2. ทำ **Memory Indexing**: จัดโครงสร้างข้อมูลใน PHP เป็น Associative Array (Map) เพื่อให้เข้าถึงข้อมูลได้ทันทีในลูปการแสดงผล 3. ลดภาระ Database Connection โดยการเปิด Connection ครั้งเดียวที่หน้าจอหลักแล้วส่งพารามิเตอร์ต่อให้ฟังก์ชันย่อย",
       "dont": "ห้ามเขียน SQL Query ภายในลูปที่มีการทำงานซ้ำๆ จำนวนมาก (เช่น ลูปวันที่ หรือลูปรายการสินค้า) เพราะจะทำให้เกิด Overhead ในการรับส่งข้อมูลและ Database ทำงานหนักเกินความจำเป็น",
       "root_cause": "การออกแบบโค้ดแบบ Procedural ที่ยิง Query ตามการไหลของโปรแกรม (Logical Flow) โดยไม่ได้คำนึงถึงประสิทธิภาพในสเกลข้อมูลขนาดใหญ่",
-      "tags": ["PHP", "SQL", "Optimization", "Performance", "N+1-Problem", "Bulk-Fetch"]
+      "tags": [
+        "PHP",
+        "SQL",
+        "Optimization",
+        "Performance",
+        "N+1-Problem",
+        "Bulk-Fetch"
+      ]
     },
     {
       "id": "K017",
@@ -188,7 +285,15 @@
       "do": "1. ใช้ Relative Path (`../`) ในลิงก์ Sidebar เสมอเพื่อให้เข้าถึงไฟล์ได้ถูกต้องจากทุกระดับความลึก 2. นำตัวแปรลำดับ ($i) ออกจาก CSS/ID ในหน้าจอที่ไม่มีการวนลูป (หน้าสรุป) เพื่อให้ Selector ทำงานได้ถูกต้อง",
       "dont": "ห้ามใช้ Path แบบลอยๆ (ไม่มี ../) ใน Shared Sidebar และห้ามก๊อปปี้ฟังก์ชันแสดงผลจากหน้าที่มีลูป (Day) ไปใช้ในหน้าสรุป (Period) โดยไม่ลบตัวแปรลำดับแถวออก",
       "root_cause": "1. การอ้างอิงไฟล์แบบ Absolute ภายใน Folder ทำให้ลิงก์พังเมื่อเปลี่ยน Directory 2. การก๊อปปี้ Logic การแสดงผล (Visibility) มาโดยไม่ได้ล้างตัวแปรที่ผูกกับลูป ($i) ทำให้ Selector หาเป้าหมายไม่เจอ",
-      "tags": ["PHP", "CSS", "UI", "Bug", "Sidebar", "Navigation", "Visibility"]
+      "tags": [
+        "PHP",
+        "CSS",
+        "UI",
+        "Bug",
+        "Sidebar",
+        "Navigation",
+        "Visibility"
+      ]
     },
     {
       "id": "K018",
@@ -199,7 +304,14 @@
       "do": "1. สร้างฟังก์ชัน JS สำหรับสั่ง `.show()` / `.hide()` แถวที่มีคลาสควบคุมรายละเอียดทั้งหมดในครั้งเดียว 2. ใช้ jQuery `.each()` ร่วมกับ `.toggle()` เพื่อทำ Client-side Search ในตาราง ช่วยให้กรองข้อมูล (MC, Size, Problem) ได้ทันทีโดยไม่ต้องยิง Query ใหม่",
       "dont": "ห้ามใช้การขยายข้อมูลแบบ 1-by-1 เท่านั้นสำหรับ Dashboard ที่มีข้อมูลหลายชั้น แนะนำให้มีทางเลือกแบบ Bulk Action เสมอเพื่อประสบการณ์การใช้งานที่ดี",
       "root_cause": "การออกแบบ UI แบบ Progressive Disclosure (ค่อยๆ เปิด) มีประสิทธิภาพดีในแง่ความสะอาดตา แต่มีปัญหาเรื่องความเร็วในการเข้าถึงข้อมูลเชิงลึกเมื่อผู้ใช้ต้องการดูภาพรวม",
-      "tags": ["JS", "jQuery", "UX", "Search", "Bulk-Action", "UI-Pattern"]
+      "tags": [
+        "JS",
+        "jQuery",
+        "UX",
+        "Search",
+        "Bulk-Action",
+        "UI-Pattern"
+      ]
     },
     {
       "id": "K019",
@@ -210,7 +322,15 @@
       "do": "1. ล้าง JavaScript event handlers ชุดเก่าที่สั่งซ่อน/แสดงแถวแบบ manual (jQuery .click) ออกหากมีการใช้ inline onclick หรือฟังก์ชันกลาง 2. ใช้ Relative Path (../) ใน Shared Components เสมอ และตรวจสอบลำดับการเรียกไฟล์ใน <head> 3. ใน PHP เมื่อใช้ double quote ครอบ onclick ห้ามใส่ backslash (\\) หน้า single quote ของ JS (เช่น onclick=\"fn('val')\") เพราะจะทำให้ JS Error",
       "dont": "ห้ามใช้ jQuery .click() และ inline onclick บน Element เดียวกันโดยไม่จัดการลำดับการทำงาน เพราะจะเกิด Conflict และห้ามใช้ backslash ใน string ที่จะ echo ออกมาเป็น JS inline attribute ถ้าไม่จำเป็นจริงๆ",
       "root_cause": "1. โค้ดเดิมมีการเขียน JS ควบคุม UI กระจัดกระจายและทับซ้อนกัน 2. การ escape เครื่องหมาย quote ใน PHP ที่ผิดพลาดทำให้คำสั่ง JS พัง 3. การอ้างอิง Path ใน Shared Sidebar ไม่ยืดหยุ่นพอเมื่อเรียกจาก Directory ต่างระดับกัน",
-      "tags": ["JS", "jQuery", "PHP", "Bug", "Path", "UI", "Escaping"]
+      "tags": [
+        "JS",
+        "jQuery",
+        "PHP",
+        "Bug",
+        "Path",
+        "UI",
+        "Escaping"
+      ]
     },
     {
       "id": "K020",
@@ -221,7 +341,14 @@
       "do": "1. เพิ่มเงื่อนไข `OR A.MCNO IN ('BTER1', 'SSR1')` ใน SQL Query หลัก 2. ใช้ `strtoupper()` กับ input parameters 3. ตรวจสอบและแปลงความยาว `prodate` (8 เป็น 6 หลัก) 4. ทำ Re-mapping ค่า `fmmc` ใน API response ให้ตรงกับเครื่องที่ร้องขอเสมอ",
       "dont": "ห้ามสมมติว่า OrderId ใน OFS จะขึ้นต้นด้วยชื่อเครื่องเสมอ (บางครั้งเป็น Workcenter ID) และห้ามปล่อยให้ User Input (Case sensitivity) หรือ Date Format (YYYYMMDD) ทำให้ API คืนค่าว่าง",
       "root_cause": "1. SQL Query กรองเฉพาะ SYSTEM='FORMING' 2. API ไม่รองรับการดึงข้อมูลเมื่อ OrderId ใน OFS ใช้รหัสอื่นแทนชื่อเครื่อง และ 3. ความแตกต่างของ Date format ระหว่าง UI/API",
-      "tags": ["PHP", "API", "SQL", "Bug", "Data-Mapping", "Tireproduction"]
+      "tags": [
+        "PHP",
+        "API",
+        "SQL",
+        "Bug",
+        "Data-Mapping",
+        "Tireproduction"
+      ]
     },
     {
       "id": "K021",
@@ -232,7 +359,14 @@
       "do": "สร้างฟังก์ชัน mapping คะแนนดิบไปที่เปอร์เซ็นต์ตำแหน่ง visual โดยแบ่งช่วงความสูงให้เท่ากับจำนวนกล่อง (เช่น 5 กล่อง = กล่องละ 20%) แล้ว map คะแนนให้ตกลงใน block ความสูงที่ถูกต้อง",
       "dont": "ห้ามใช้ค่าเปอร์เซ็นต์คะแนนจริง (Raw Score %) มาตั้งค่า height หรือ bottom ใน CSS โดยตรงถ้าสเกลของเกณฑ์ข้างๆ ไม่เป็น linear",
       "root_cause": "การ Mapping แบบ Linear (0-100% height = 0-100 score) ขัดแย้งกับการออกแบบ UI ที่แต่ละช่วงคะแนนมีพื้นที่การแสดงผลเท่ากัน",
-      "tags": ["PHP", "CSS", "UI", "Thermometer", "Mapping", "UX"]
+      "tags": [
+        "PHP",
+        "CSS",
+        "UI",
+        "Thermometer",
+        "Mapping",
+        "UX"
+      ]
     },
     {
       "id": "K022",
@@ -243,7 +377,14 @@
       "do": "ใช้ `COALESCE(SUM(column_name), 0)` หรือ `ISNULL(SUM(column_name), 0)` ครอบส่วนของผลรวมเสมอ เพื่อบังคับให้ SQL คืนค่า 0 แทน NULL เมื่อไม่พบแถวข้อมูล",
       "dont": "ห้ามใช้ `SUM(column_name)` ตรงๆ โดยไม่ดัก NULL ในจุดที่มีความเสี่ยงว่าข้อมูลอาจจะยังไม่เข้า (เช่น ตอนเริ่มเดินเครื่อง หรือเริ่มกะใหม่)",
       "root_cause": "มาตรฐาน SQL กำหนดให้ SUM ของเซตว่างคืนค่า NULL ซึ่งใน PHP/PDO จะถูกแปลเป็นค่าว่าง ทำให้ Logic การแสดงผลหรือการคำนวณตัวเลขผิดพลาด",
-      "tags": ["SQL", "MSSQL", "PHP", "Bug", "NULL-Handling", "Dashboard"]
+      "tags": [
+        "SQL",
+        "MSSQL",
+        "PHP",
+        "Bug",
+        "NULL-Handling",
+        "Dashboard"
+      ]
     },
     {
       "id": "K023",
@@ -254,7 +395,14 @@
       "do": "1. สร้างโครงสร้าง `assets/` (vendors, images, css, js) เพื่อรวมศูนย์ทรัพยากร 2. ใช้ `config.php` กำหนด `BASE_URL`, `ASSETS_URL` และ `ASSETS_PATH` โดยอ้างอิงจาก `__DIR__` 3. Integrated config เข้ากับไฟล์เชื่อมต่อหลัก (sqlconnect.php) เพื่อให้ใช้ค่าคงที่ได้ทั่วถึง 4. แทนที่ Path ที่ผิดพลาดด้วยค่าคงที่เพื่อให้โปรเจกต์เป็นอิสระและพกพาง่าย 5. กรณี Push ติด Permission หรือ Credential ให้ใช้ Personal Access Token (PAT) และ Push ด้วย URL ตรงๆ เพื่อข้ามข้อจำกัดของระบบ",
       "dont": "ห้ามใช้ Path แบบ Hardcode ชื่อโฟลเดอร์โปรเจกต์ลงในโค้ด (เช่น /tubeproduction/...) หรือใช้ `../` วนออกนอกบ้านแล้วกลับเข้ามาใหม่ เพราะจะพังเมื่อเปลี่ยนระดับชั้นของ Directory ในเครื่องอื่น และห้ามยอมแพ้เมื่อเจอ Permission Denied ใน .git/config ให้ลอง Push ด้วย URL Explicit แทน",
       "root_cause": "การเขียนโปรเจกต์แบบกระจายศูนย์ (Decentralized) และความซับซ้อนของสิทธิ์การเข้าถึงไฟล์บน Network Drive / Windows Environment ทำให้ Git Migration แบบมาตรฐานติดขัด",
-      "tags": ["PHP", "Asset-Management", "Git-Migration", "Refactoring", "Path-Handling", "Best-Practice"]
+      "tags": [
+        "PHP",
+        "Asset-Management",
+        "Git-Migration",
+        "Refactoring",
+        "Path-Handling",
+        "Best-Practice"
+      ]
     },
     {
       "id": "K024",
@@ -265,7 +413,12 @@
       "do": "Implement an API endpoint to fetch fresh history HTML and call it from JS after every successful AJAX save. Always ensure a parent record exists before logging (auto-create DRAFT if needed).",
       "dont": "Don't rely on PHP pre-rendered history if the page allows real-time edits, as it won't show new changes without refresh.",
       "root_cause": "Orphaned logs occur if submission_id is 0, and UI sync fails if history is not reloaded via AJAX.",
-      "tags": ["AJAX", "Audit Log", "UI Sync", "PHP"]
+      "tags": [
+        "AJAX",
+        "Audit Log",
+        "UI Sync",
+        "PHP"
+      ]
     },
     {
       "id": "K025",
@@ -276,7 +429,12 @@
       "do": "Verify method names against actual class source code instead of relying on memory. Check Network response for Fatal Errors (e.g., calling getPdo() instead of getConnection()).",
       "dont": "Don't assume method names follow standard conventions (like getByX) if the underlying library is custom-built.",
       "root_cause": "Calling non-existent methods (getByPeriod, getPdo) causes PHP Fatal Errors that break JSON output.",
-      "tags": ["PHP", "Debugging", "Fatal Error", "JSON"]
+      "tags": [
+        "PHP",
+        "Debugging",
+        "Fatal Error",
+        "JSON"
+      ]
     },
     {
       "id": "K026",
@@ -287,7 +445,29 @@
       "do": "Mirror the backend calculation logic in JavaScript using regex and new Function() to provide instant visual updates and Pass/Fail status.",
       "dont": "Don't trigger an AJAX call for every keystroke to perform server-side calculations as it lags the UI.",
       "root_cause": "Server-side calculation for every input change causes high latency and poor UX.",
-      "tags": ["JavaScript", "UI/UX", "Calculation", "Performance"]
+      "tags": [
+        "JavaScript",
+        "UI/UX",
+        "Calculation",
+        "Performance"
+      ]
+    },
+    {
+      "id": "K027",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Modal-only Detailed Display for Clean Dashboard",
+      "situation": "หน้าจอ Dashboard มีข้อมูลส่วนขยาย (เช่น Action Plan) ที่ยาวและกินพื้นที่ ทำให้การกรอกข้อมูลหลักทำได้ยากและหน้าจอรก",
+      "do": "1. นำ HTML ส่วนแสดงผลรายละเอียดออกจากหน้าหลัก 2. ให้ข้อมูลแสดงผลเฉพาะภายใน Modal เมื่อผู้ใช้กดปุ่มดู/แก้ไขเท่านั้น 3. ใช้ Hidden Inputs เพื่อรักษา State ของข้อมูลสำหรับส่งไปเก็บที่ฐานข้อมูล 4. ใส่คอมเมนต์แจ้งเตือนในโค้ดว่าส่วนที่นำออกสามารถดูได้ที่ไหน",
+      "dont": "ห้ามลบ Element หรือ Code ที่ทำหน้าที่เก็บข้อมูล (Hidden Inputs) หรือ Logic การ Mapping ข้อมูลเข้า Modal เพราะจะทำให้การแก้ไขข้อมูลพัง",
+      "root_cause": "การแสดงข้อมูลทุกอย่างบนหน้าจอเดียวกัน (All-in-one view) ไม่เหมาะกับระบบที่มีข้อมูลรายละเอียดซับซ้อน ทำให้ UX แย่ลง",
+      "tags": [
+        "UI/UX",
+        "Modal",
+        "Dashboard",
+        "Clean-Code",
+        "State-Management"
+      ]
     }
   ]
 }
