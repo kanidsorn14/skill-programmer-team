@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1",
   "description": "Global Knowledge Base — ทีมโปรแกรมเมอร์ สะสมความรู้ข้ามโปรเจกต์ ห้ามลบข้อมูลเก่าเด็ดขาด",
-  "last_updated": "2026-05-07",
+  "last_updated": "2026-05-08",
   "entries": [
     {
       "id": "K001",
@@ -467,6 +467,191 @@
         "Dashboard",
         "Clean-Code",
         "State-Management"
+      ]
+    },
+    {
+      "id": "K028",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Required Input in Multi-item Modals",
+      "situation": "ต้องบังคับให้ผู้ใช้อนุมัติกรอกข้อมูล 'ต้อง/ไม่ต้อง Follow-up' สำหรับเฉพาะ KPI บางข้อที่ตกเกณฑ์ ก่อนที่จะกดยืนยันอนุมัติได้",
+      "do": "ใช้ JavaScript วนลูปตรวจสอบ Element ที่ Require (เช่น `.follow-up-radio:checked`) ก่อน submit form หากพบว่าไม่มีการเลือกให้แสดง `alert` และดึง Focus กลับไปที่จุดที่ยังไม่ได้กรอกเพื่อป้องกันข้อมูลตกหล่น",
+      "dont": "อย่าไว้ใจ HTML5 `required` attribute อย่างเดียวเมื่อ input อยู่ใน Modal และมีหลายข้อซ้อนกัน เพราะบางครั้ง Browser อาจจะไม่แสดง Bubble Error หาก Element นั้นไม่ได้แสดงผล หรืออยู่ใน tab ที่ถูกซ่อน",
+      "root_cause": "การ Validate แบบอาศัย Browser Default บางครั้งไม่ทำงานในสภาพแวดล้อมที่ซับซ้อน เช่นในตารางที่ยาวหรือซ่อนอยู่ใน Modal ที่ render ทับกัน",
+      "tags": [
+        "JavaScript",
+        "Validation",
+        "UI/UX",
+        "Modal",
+        "Bug-Prevention"
+      ]
+    },
+    {
+      "id": "K029",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Inline Form Validation & Auto-scroll in Modals",
+      "situation": "การแจ้งเตือนแบบ `alert()` เมื่อผู้ใช้กรอกข้อมูลไม่ครบในหน้าต่าง Modal ทำให้ UX ไม่ค่อยดี และผู้ใช้มองไม่เห็นจุดที่ต้องแก้",
+      "do": "1. ใช้ JavaScript ตรวจสอบข้อมูลก่อน submit 2. หากข้อมูลไม่ครบ ให้เน้นสีแดงรอบกล่องข้อมูล (card) ที่มีปัญหา 3. แทรกข้อความแจ้งเตือนสีแดง (Error Banner) ไว้ใน Modal โดยตรง 4. ใช้ฟังก์ชัน `.scrollIntoView({behavior:'smooth', block:'center'})` เพื่อเลื่อนหน้าจอไปยังจุดที่ยังกรอกไม่ครบอัตโนมัติ",
+      "dont": "หลีกเลี่ยงการใช้ `alert()` เปล่าๆ โดยไม่มีการ highlight จุดผิด เพราะจะทำให้ผู้ใช้ต้องเสียเวลาหาว่าลืมกรอกตรงไหน โดยเฉพาะในฟอร์มที่มีความยาว",
+      "root_cause": "การทำ Validation เดิมที่พึ่งพาเพียง Alert หรือ Browser Default ไม่สามารถให้คำแนะนำทางสายตา (Visual Feedback) ได้ดีพอเมื่อฟอร์มมีความซับซ้อน",
+      "tags": [
+        "JavaScript",
+        "UI/UX",
+        "Validation",
+        "Modal",
+        "Scroll"
+      ]
+    },
+    {
+      "id": "K030",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Passing Complex Data to JS via Data Attributes",
+      "situation": "การพยายามส่งข้อมูลทั้ง Array จาก PHP เข้าฟังก์ชัน JS ด้วย `onclick=\"func(<?php echo json_encode($data); ?>)\"` ทำให้เกิดปัญหา Quote ซ้อนทับกัน (HTML กับ JSON) และพังเมื่อมีอักขระพิเศษ (เช่น single quote ในชื่อ)",
+      "do": "ให้แตกค่าลงใน HTML5 `data-*` attribute บนปุ่มแทน (เช่น `data-sub-id`, `data-org-name`) พร้อมครอบค่าข้อความด้วย `htmlspecialchars($val, ENT_QUOTES)` จากนั้นให้ส่งค่า `this` เข้าไปใน JS (`onclick=\"openModal(this)\"`) เพื่อดึงค่าผ่าน `dataset` แทน",
+      "dont": "ห้ามยัด `json_encode` ทั้งก้อนลงไปใน inline `onclick` attribute เพราะมีความเสี่ยงสูงที่จะเกิด Syntax Error ถ้าข้อมูลดิบมีการใช้เครื่องหมาย Quote ผิดรูปแบบ",
+      "root_cause": "การพยายามทำ Serialization ของ JSON ให้อยู่รอดปลอดภัยใน HTML Attribute มักล้มเหลวถ้ามี Quote สลับไปมา (เช่น `onclick='func({\"name\":\"O\\'Connor\"})'`)",
+      "tags": [
+        "PHP",
+        "JavaScript",
+        "HTML5",
+        "Data-Attributes",
+        "Bug-Prevention",
+        "Escaping"
+      ]
+    },
+    {
+      "id": "K031",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Configuration-Driven Role Management",
+      "situation": "การกำหนดสิทธิ์แบบฝังตัว (Hardcode) ในไฟล์ PHP (เช่น `if ($role == 'QMR' || $role == 'ISO')`) ทำให้เมื่อมีการเพิ่มตำแหน่งผู้มีอำนาจอนุมัติใหม่ ต้องไล่แก้โค้ดตามจุดต่างๆ ทั้งระบบ",
+      "do": "ย้ายค่าตัวแปรรายชื่อ Role ที่มีสิทธิ์ (เช่น `approval_level_4_roles`, `final_approval_roles`) ไปรวมไว้ที่ไฟล์ Configuration (`data/settings.json`) เพื่อให้ดึงไปใช้งานด้วยคลาสหรือฟังก์ชันกลาง ช่วยให้สามารถสร้างหน้า UI สำหรับแก้ไขค่าเหล่านี้ในภายหลังได้โดยไม่ต้องเปิดโค้ด",
+      "dont": "ห้าม Hardcode เช็คชื่อ Role ผู้ดูแลระบบ หรือเงื่อนไขระดับสิทธิ์การอนุมัติกระจายตามไฟล์ Controller หรือ View (Code Duplication)",
+      "root_cause": "การ Hardcoding Business Logic / Authorization Rules ทำให้โครงสร้างระบบยึดติดและดูแลรักษายากในระยะยาว (Maintenance Difficulty)",
+      "tags": [
+        "Architecture",
+        "Configuration",
+        "Role-Management",
+        "Maintainability",
+        "Refactoring"
+      ]
+    },
+    {
+      "id": "K032",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Admin Override & Strict Validation Pattern",
+      "situation": "ในระบบ Approval บางครั้งเอกสารค้างคิวเพราะ Approver ไม่อยู่ หรือเกิด Error ทำให้ระบบหยุดชะงัก แอดมินควรสามารถแทรกแซงเพื่อแก้ปัญหาได้",
+      "do": "สร้างฟังก์ชัน Override สำหรับ Admin แยกออกจาก Logic การ Approval ปกติ (เช่น ดึง `approveWithValidation` ออกไปสำหรับ User ธรรมดา และสร้างเงื่อนไขพิเศษ `admin_override && isAdmin()` ให้เรียกฟังก์ชัน `approve` ที่ข้ามการ Validate เพื่อใช้เป็น Superuser Bypass)",
+      "dont": "ห้ามเอาเงื่อนไขการ Bypass ของ Admin ไปปะปนในโค้ดตรวจสอบหลัก (Main Business Logic) เพราะจะทำให้โค้ดซับซ้อน อ่านยาก และเสี่ยงเกิดช่องโหว่ด้านสิทธิ์ (Security Loophole)",
+      "root_cause": "การที่ระบบขาดโหมด Superuser ทำให้เมื่อเกิดเคสผิดปกติหรือเอกสารติดล็อก (Deadlock) ฝ่ายไอทีไม่สามารถแก้ไขสถานการณ์หน้างานได้",
+      "tags": [
+        "Architecture",
+        "Security",
+        "Admin-Bypass",
+        "Validation"
+      ]
+    },
+    {
+      "id": "K033",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Bulk State Reset Pattern (Prevent Stale Data)",
+      "situation": "ในฟอร์มที่ผู้ใช้ติ๊กเลือกสถานะไป-มา (Check/Uncheck) ถ้า Backend สั่งแค่ `UPDATE ... WHERE is_checked = 1` ตามข้อมูลที่ส่งมา คนที่เคยถูกติ๊กแต่รอบนี้โดนเอาออก จะไม่ถูกเปลี่ยนสถานะบน Database (เกิด Stale Data)",
+      "do": "ให้ Reset ค่าสถานะของข้อมูลทั้งกลุ่มเป้าหมาย (เช่น ล้างเป็น `NULL` หรือ `0` ผ่าน `WHERE id IN (...)`) ก่อน แล้วจึงค่อยเอาเฉพาะข้อมูลที่ส่งมารอบล่าสุดไปวนลูปอัปเดตให้เป็น `1`",
+      "dont": "ห้ามวนลูปอัปเดตเฉพาะรายการที่ Frontend ส่งมาโดยไม่อัปเดตตัวที่หายไป เพราะพฤติกรรมปกติของ HTML Checkbox เมื่อไม่ติ๊ก มันจะไม่ส่งค่าใดๆ ใน `$_POST` เลย",
+      "root_cause": "พฤติกรรมธรรมชาติของ HTML Form ขัดกับความคาดหวังฝั่ง Database ทำให้ถ้าไม่รีเซ็ตข้อมูลตั้งต้น (Baseline) ก่อน จะเกิดข้อมูลตกค้างสะสม",
+      "tags": [
+        "SQL",
+        "Data-Integrity",
+        "Bulk-Update",
+        "Bug-Prevention"
+      ]
+    },
+    {
+      "id": "K034",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Deep Link Email Notification via Gateway",
+      "situation": "เมื่อโอนสิทธิ์อนุมัติ (Assign Approver) ต้องส่งอีเมลและมี Link ให้กดเพื่อเข้าหน้าจออนุมัติได้ทันที แต่ไม่ต้องการโชว์ ID แบบตรงๆ เพื่อความปลอดภัย",
+      "do": "1. เข้ารหัส ID เป็น Token ก่อน (`SecurityHelper::encrypt($subId)`) 2. แนบเป็น URL ไปยังไฟล์ทางเข้ากลาง (เช่น `email_gateway.php?token=...`) เพื่อตรวจสอบสิทธิ์และ Redirect 3. ใช้ตัวช่วยอย่าง `EmailHelper` สร้างและส่งอีเมล",
+      "dont": "ห้ามใส่ URL เป็น `url.php?id=123` ในตัวอีเมลโดยตรง เพราะทำให้เกิดความเสี่ยงที่คนอื่นจะสุ่มเดา ID และทะลวงเข้ามาถึงหน้าข้อมูลได้หากตรวจสอบ Session ไม่ดีพอ",
+      "root_cause": "การส่ง Deep link ผ่านอีเมลเปิดโอกาสให้เกิดช่องโหว่ด้าน IDOR (Insecure Direct Object Reference) หากไม่ใช้ Token-based",
+      "tags": [
+        "Email",
+        "Security",
+        "Deep-Link",
+        "UX"
+      ]
+    },
+    {
+      "id": "K035",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Idempotent Data Insertion",
+      "situation": "ฟังก์ชันบางอย่างสามารถถูกเรียกซ้ำได้ (เช่น กดย้ำๆ, Refresh หรือเรียกใหม่หลัง Error) ทำให้เกิดข้อมูลเบิ้ลซ้ำในฐานข้อมูล (เช่น แผน Action Plan เกิดซ้ำ 2 ใบจาก KPI เดียวกัน)",
+      "do": "ตรวจสอบว่ามีข้อมูลนั้นอยู่แล้วหรือไม่ก่อนบันทึกเสมอ (เช่น ทำ `SELECT id FROM table WHERE ref_id = ?` และตรวจสอบว่า `!$stmtCheck->fetchColumn()` ถึงยอมประมวลผลคำสั่ง `INSERT`)",
+      "dont": "อย่าใช้คำสั่ง `INSERT` โดดๆ ในการสร้าง Record ที่มีความสำคัญหรืออ้างอิงเป็นแบบ 1-to-1 (One-to-One) โดยไม่ได้ตรวจสอบสถานะเก่าก่อน",
+      "root_cause": "การออกแบบโค้ดที่ไม่รองรับการทำซ้ำ (Lack of Idempotency) ก่อให้เกิดผลลัพธ์ซ้ำซ้อนและปัญหากระทบกับ Business Logic ขั้นถัดไป",
+      "tags": [
+        "PHP",
+        "SQL",
+        "Bug-Prevention",
+        "Idempotence"
+      ]
+    },
+    {
+      "id": "K036",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "SaaS-Style Dashboard UI (Linear/Vercel Pattern)",
+      "situation": "หน้าจอ Dashboard องค์กรทั่วไปมักจะดูรก ทึบ และกินพื้นที่ (Cluttered) จากการใช้ Card สีสดๆ หรือเส้นขอบหนาๆ ทำให้ดูไม่ทันสมัย",
+      "do": "ออกแบบ UI สไตล์ SaaS (เช่น Linear, Vercel) โดยเน้น 4 เสาหลัก: 1. **White Space:** ปล่อยพื้นที่ว่างให้สายตาพัก 2. **Minimal Colors:** ลดการใช้สีฉูดฉาด ใช้สีโทนสว่าง/พาสเทลเป็นพื้นหลัง และใช้สีหลักเฉพาะจุดสำคัญ 3. **Clear Typography:** ตัวหนังสือต้องอ่านง่าย ลำดับความสำคัญชัดเจน 4. **Compact Elements:** ยุบ Card ใหญ่เป็น Compact Stats Bar (ทรง Pill) และจัด Filter Bar ให้เสมอกันด้วย `d-flex align-items-end` (ใช้ `<label class=\"d-block\">&nbsp;</label>` ดันปุ่ม)",
+      "dont": "หลีกเลี่ยงการใช้ Card ขนาดยักษ์บนพื้นที่ที่มีจำกัด และอย่าใช้แม่สีสดๆ ทาเป็นพื้นหลังกว้างๆ เพราะจะขัดกับหลักการ SaaS Design ที่เน้นความสะอาดตา",
+      "root_cause": "การนำ Bootstrap Components มาวางต่อกันเฉยๆ โดยไม่ปรับ Whitespace และ Typography ทำให้ได้หน้าจอที่ดูเหมือน 'งานหลังบ้านยุค 2010' ขาดความรู้สึก Premium",
+      "tags": [
+        "UI/UX",
+        "SaaS-Design",
+        "Linear-Vercel",
+        "Typography",
+        "White-Space"
+      ]
+    },
+    {
+      "id": "K037",
+      "date": "2026-05-07",
+      "project": "iso_kpi",
+      "task_summary": "Smooth Animation & Micro-interactions (SaaS Feel)",
+      "situation": "ป๊อปอัป (Modal) ที่เขียนด้วย JavaScript พื้นฐาน มักถูกสั่งโชว์แบบทื่อๆ (`display: block`) พร้อมฉากหลังสีดำทึบ ทำให้ดูเป็นระบบรุ่นเก่าและทำให้สายตาผู้ใช้โฟกัสไม่ทัน",
+      "do": "ยกระดับ UI ด้วย Smooth Animation สไตล์ SaaS: 1. ใช้ฉากหลังกึ่งโปร่งแสง `backdrop-filter: blur(4px)` (Glassmorphism) 2. กล่อง Modal เริ่มด้วย `transform: scale(0.95); opacity: 0;` 3. เมื่อสั่งแสดง ให้เพิ่มคลาส `.show` ด้วย `setTimeout()` ใน JS เพื่อสร้างแอนิเมชันขยายร่างขึ้นมาอย่างนุ่มนวล 4. เพิ่ม Hover effect เบาๆ (เช่น ลอยขึ้น) ตามปุ่มหรือตาราง",
+      "dont": "ห้ามแสดง Modal แบบเปิด-ปิดกระพริบทันทีโดยไม่มี Transition เพราะการขาด Micro-interactions คือจุดตัดที่ทำให้แยกระหว่างระบบทั่วไป กับ Premium SaaS",
+      "root_cause": "ข้อจำกัดการสลับ `display: none` กับ `block` ตัดการทำงานของ CSS Transition การแก้ปัญหาคือต้องหน่วงเวลาเติมคลาสแอนิเมชันให้ Render Engine ทำงานทัน",
+      "tags": [
+        "UI/UX",
+        "Smooth-Animation",
+        "Micro-interactions",
+        "Glassmorphism",
+        "Premium-Design"
+      ]
+    },
+    {
+      "id": "K038",
+      "date": "2026-05-08",
+      "project": "iso_kpi",
+      "task_summary": "Network Drive Mapping for PHP/Apache Services (Action Plan Paths)",
+      "situation": "ต้องการให้ PHP เข้าถึงไฟล์ใน Network Share หรือ Shared Drive (Mapped Drive) เพื่อเก็บไฟล์ Production ที่อนุมัติแล้ว",
+      "do": "1. ใช้ UNC Path (\\\\\\\\server\\\\share) แทนการใช้ Drive Letter (Z:\\\\) เพื่อความเสถียร 2. หากจำเป็นต้องใช้ credential ให้รันคำสั่ง `net use \"\\\\\\\\path\" \"pass\" /user:\"user\"` ผ่าน `shell_exec` ก่อนเข้าถึงไฟล์ 3. ตรวจสอบว่า Apache Service Account มีสิทธิ์ Read/Write บนโฟลเดอร์ปลายทาง 4. ทำระบบ Test Path โดยการลองเขียนไฟล์จริง (Write Test) ก่อนเริ่มใช้งาน",
+      "dont": "ห้ามสมมติว่า PHP จะเห็น Mapped Drive (Z:\\\\) ที่เราแมพไว้ใน Windows Explorer เพราะ Service Account ทำงานคนละ Session กับ User และห้ามใส่ Subfolder ในส่วนของ net use (ให้ใช้แค่ root share)",
+      "root_cause": "Apache/PHP รันเป็น Windows Service ซึ่งไม่แชร์ Network Drive ร่วมกับ Interactive User ทำให้เข้าถึงไฟล์ผ่าน Drive Letter ปกติไม่ได้",
+      "tags": [
+        "PHP",
+        "Windows",
+        "Network-Drive",
+        "net-use",
+        "UNC",
+        "Permissions"
       ]
     }
   ]
