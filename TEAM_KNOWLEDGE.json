@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1",
   "description": "Global Knowledge Base — ทีมโปรแกรมเมอร์ สะสมความรู้ข้ามโปรเจกต์ ห้ามลบข้อมูลเก่าเด็ดขาด",
-  "last_updated": "2026-05-08",
+  "last_updated": "2026-05-09",
   "entries": [
     {
       "id": "K001",
@@ -652,6 +652,123 @@
         "net-use",
         "UNC",
         "Permissions"
+      ]
+    },
+    {
+      "id": "K039",
+      "date": "2026-05-09",
+      "project": "ai_project_test",
+      "task_summary": "Connecting AI Project to Existing Database Config",
+      "situation": "การสร้างโปรเจกต์ AI ใหม่ที่ต้องใช้ข้อมูลจากระบบเดิม (Legacy) โดยไม่ต้องการซ้ำซ้อนเรื่อง Credential หรือแก้ไขไฟล์ระบบหลัก",
+      "do": "สร้างไฟล์เชื่อมต่อ (เช่น `db_connect.php`) ที่เรียกใช้ `require_once` ไฟล์ Config ของระบบหลักเพื่อดึงค่าคงที่ (DB_HOST, DB_NAME) มาใช้สร้าง PDO instance ใหม่ วิธีนี้ช่วยให้โปรเจกต์ใหม่ทำงานเป็นอิสระแต่ใช้ฐานข้อมูลเดียวกันได้ปลอดภัย 100%",
+      "dont": "ห้าม Hardcode รหัสผ่านฐานข้อมูลซ้ำในโปรเจกต์ใหม่ และห้ามแก้ไขไฟล์ Config เดิมของระบบหลักเพื่อหลีกเลี่ยงผลกระทบที่ไม่คาดคิด (Side Effects)",
+      "root_cause": "การจัดการ Credential หลายชุดทำให้เสี่ยงต่อความปลอดภัยและยากต่อการบำรุงรักษาเมื่อมีการเปลี่ยนรหัสผ่านเซิร์ฟเวอร์",
+      "tags": [
+        "Architecture",
+        "Database",
+        "AI-Integration",
+        "Best-Practice",
+        "Security"
+      ]
+    },
+    {
+      "id": "K040",
+      "date": "2026-05-09",
+      "project": "ai_project_test",
+      "task_summary": "AI Analysis Prompt for Business KPIs",
+      "situation": "การส่งข้อมูล KPI ดิบไปให้ AI (เช่น Gemini) วิเคราะห์เพื่อให้ได้คำแนะนำที่นำไปใช้งานจริงได้ (Actionable Insights)",
+      "do": "จัดโครงสร้าง Prompt โดยให้ Context ที่ครบถ้วน (ชื่อ KPI, เป้าหมาย, ผลลัพธ์จริง, หน่วย, และสาเหตุที่ระบุในระบบ) พร้อมกำหนด Output ให้ชัดเจน (เช่น ขอ 3 ขั้นตอนแก้ไขเป็นภาษาไทย) และควรมี 'Demo Mode' เพื่อให้ระบบยังทำงานได้แม้ไม่มี API Key",
+      "dont": "ห้ามส่งข้อมูลดิบโดยไม่มีหัวข้อกำกับ หรือไม่มีหน่วยวัด (Unit) เพราะ AI จะขาดบริบทในการเปรียบเทียบความรุนแรงของปัญหา",
+      "root_cause": "AI ต้องการโครงสร้างข้อมูลที่ชัดเจน (Structured Data) เพื่อลดการมโน (Hallucination) และให้คำแนะนำที่ตรงจุดตามบริบทธุรกิจ",
+      "tags": [
+        "AI",
+        "Gemini",
+        "Prompt-Engineering",
+        "KPI",
+        "Analytics"
+      ]
+    },
+    {
+      "id": "K043",
+      "date": "2026-05-09",
+      "project": "ai_project_test",
+      "task_summary": "Path Migration Failure after Re-Architecture",
+      "situation": "การย้ายไฟล์ PHP จาก Root เข้าสู่โครงสร้าง Web/API/ ตามมาตรฐานใหม่ แต่ไม่ได้แก้ไข Relative Path (../) ให้ถูกต้อง",
+      "do": "หลังการย้ายไฟล์ (Move) ทุกครั้ง ต้องทำการ Path Audit ทันที โดยเฉพาะ require_once และการเรียก API ผ่าน JS ต้องปรับจากเดิม 1 ชั้นเป็น 2 ชั้นตามความลึกที่เพิ่มขึ้น",
+      "dont": "ห้ามสรุปว่างานเสร็จทันทีหลังย้ายไฟล์เสร็จ ต้องมีการรัน Browser Test เพื่อเช็ค HTTP 500 หรือ 404 ก่อนส่งงาน",
+      "root_cause": "ความประมาทในการ Execute แผนการอัปเกรดโครงสร้าง (Migration Logic Error)",
+      "tags": [
+        "Defect",
+        "Migration",
+        "PHP",
+        "Path-Handling",
+        "Best-Practice"
+      ]
+    },
+    {
+      "id": "K044",
+      "date": "2026-05-09",
+      "project": "ai_project_test",
+      "task_summary": "Git Initialization and Remote Push",
+      "situation": "เริ่มต้นระบบ Version Control สำหรับโปรเจกต์ใหม่และนำขึ้น GitHub Repository",
+      "do": "1. สร้าง `.gitignore` เพื่อละเว้นโฟลเดอร์ที่ไม่จำเป็น (เช่น `__pycache__`, `venv`, `.env`) 2. ใช้คำสั่ง `git init`, `git add .`, `git commit` และ push ขึ้น remote repository ที่ได้รับมอบหมาย",
+      "dont": "ห้าม push โดยไม่ตั้งค่า `.gitignore` สำหรับ Python environment เพราะจะนำไฟล์ cache และไลบรารีขนาดใหญ่ขึ้นระบบไปด้วย",
+      "root_cause": "โปรเจกต์เริ่มมีความซับซ้อน (มีทั้ง PHP และ Python) จึงต้องใช้ระบบ Version Control ในการจัดการ",
+      "tags": [
+        "Git",
+        "Version-Control",
+        "Best-Practice",
+        "Repository"
+      ]
+    },
+    {
+      "id": "K045",
+      "date": "2026-05-09",
+      "project": "iso_kpi",
+      "task_summary": "Bi-directional Deep Linking for Traceability",
+      "situation": "ผู้ใช้ต้อง Copy เลขเอกสาร (Doc No) สลับหน้าไปมาระหว่าง Monthly Report (หน้ารายงาน) กับ Follow-up Dashboard (หน้า Action Plan) ทำให้เสียเวลาและหงุดหงิด (Context Switching)",
+      "do": "สร้างทางเชื่อม 2 ทิศทาง (Bi-directional Link): 1. จากรายงานไป Dashboard: ส่ง Parameter `?open_doc=...` ไปให้ Dashboard กรองหาและแสดง Modal ทันทีเมื่อโหลดหน้าเสร็จ (ผ่าน JS Fetch All) 2. จาก Dashboard มารายงาน: ทำป้าย Doc No ให้เป็น `<a href=...>` ลิงก์ตรงกลับมาที่หน้ารายงานของแผนกนั้นๆ",
+      "dont": "ห้ามละเลย User Journey และอย่าปล่อยให้ผู้ใช้ต้องค้นหาข้อมูลเดิมด้วยตัวเองซ้ำๆ หากระบบสามารถส่งต่อ Parameter (State) ไปทำให้อัตโนมัติได้",
+      "root_cause": "การแยกโมดูลการแสดงผลรายงานออกจากการบริหารจัดการ Action Plan ทำให้บริบทถูกตัดขาด",
+      "tags": [
+        "UI/UX",
+        "Traceability",
+        "Deep-Linking",
+        "Productivity",
+        "User-Journey"
+      ]
+    },
+    {
+      "id": "K046",
+      "date": "2026-05-09",
+      "project": "iso_kpi",
+      "task_summary": "Visibility Gap in Cross-Linked Status",
+      "situation": "ISO ดึงเอกสารรายงานกลับ (Recall) ทำให้สถานะกลับไปเป็น DRAFT แต่ตาราง Action Plan และ Badge ตัวเลขที่พึ่งพาค่า is_follow_up เดิมไม่ได้ดึงข้อมูลสถานะของเอกสารแม่มาเช็คด้วย ทำให้เกิดรายการผี (Orphan/Zombie) ค้างอยู่ใน Dashboard",
+      "do": "เมื่อตารางลูก (Child/Related Table) พึ่งพาสถานะที่เกิดจากเอกสารแม่ (Parent Document) การ Query ข้อมูลมาแสดงผลต้อง JOIN กลับไปที่ตารางแม่เพื่อเช็คสถานะเสมอ เช่น `AND s.status IN ('APPROVED_FINAL', 'PUBLISHED')`",
+      "dont": "ห้ามแสดงผลข้อมูลของตารางลูกโดยยึดแค่สถานะในตัวมันเอง หากวงจรชีวิต (Lifecycle) ของมันขึ้นอยู่กับสถานะของเอกสารหลัก (ห้ามลบข้อมูลลูกทิ้งเผื่อ User กลับมาใช้ ให้ใช้วิธีซ่อนแทน)",
+      "root_cause": "การออกแบบ Query ตอนแรกละเลย State Synchronization ระหว่าง Parent (Monthly Report) และ Child (Action Plan)",
+      "tags": [
+        "Defect",
+        "SQL-Query",
+        "State-Management",
+        "Lifecycle",
+        "Data-Integrity"
+      ]
+    },
+    {
+      "id": "K047",
+      "date": "2026-05-09",
+      "project": "iso_kpi",
+      "task_summary": "Auto-Subfolder Structure for Document Storage",
+      "situation": "การเก็บไฟล์แนบ (เช่น Action Plan) ของทั้งบริษัทรวมไว้ในโฟลเดอร์ Root เดียวกัน ทำให้โฟลเดอร์รกและแอดมินค้นหาผ่าน Windows Explorer ลำบากเมื่อเวลาผ่านไปหลายปี",
+      "do": "สร้าง Logic ในโค้ดตอนที่ย้ายไฟล์ไป Production ให้ดึงข้อมูล ปี (Year) และ แผนก (Org_Name) มาสร้าง Sub-folder ให้อัตโนมัติ (และ Sanitize ชื่อด้วย Regex) พร้อมกับเก็บ Absolute/Relative Path ขาลง DB ตามโครงสร้างใหม่",
+      "dont": "ห้ามเปลี่ยน Root Path ในหน้า Config บ่อยๆ และห้ามย้ายไฟล์เก่าด้วยมือโดยไม่เปลี่ยน Path ใน DB การปล่อยให้โค้ดจัดการ Path ใหม่เฉพาะไฟล์ที่อัปโหลดใหม่จะมีความปลอดภัยสูงสุดแบบไร้รอยต่อ (Backward Compatible)",
+      "root_cause": "การออกแบบ File Storage ตอนแรกไม่ได้มองไกลถึงหลักพันหลักหมื่นไฟล์",
+      "tags": [
+        "Architecture",
+        "File-Management",
+        "Best-Practice",
+        "Data-Organization"
       ]
     }
   ]
