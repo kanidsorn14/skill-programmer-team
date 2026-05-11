@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1",
   "description": "Global Knowledge Base — ทีมโปรแกรมเมอร์ สะสมความรู้ข้ามโปรเจกต์ ห้ามลบข้อมูลเก่าเด็ดขาด",
-  "last_updated": "2026-05-09",
+  "last_updated": "2026-05-11",
   "entries": [
     {
       "id": "K001",
@@ -769,6 +769,109 @@
         "File-Management",
         "Best-Practice",
         "Data-Organization"
+      ]
+    },
+    {
+      "id": "K048",
+      "date": "2026-05-09",
+      "project": "global",
+      "task_summary": "Mandatory Documentation Sync (Data Dictionary, Data Flow, Program Flow)",
+      "situation": "เมื่อมีการแก้ไขโครงสร้างฐานข้อมูล หรือเปลี่ยน Logic การทำงานที่สำคัญ แล้วไม่ได้อัปเดตเอกสารประกอบ ทำให้ทีมงานคนอื่น (หรือ AI ในเซสชันถัดไป) เข้าใจคลาดเคลื่อนและสร้างบัคใหม่",
+      "do": "อัปเดตไฟล์ docs/data_dictionary.md, docs/data_flow.md, และ docs/program_flow.md ทันทีเมื่อมีการเปลี่ยนแปลงที่เกี่ยวข้อง และระบุในสรุปงานว่าได้อัปเดตเอกสารแล้ว",
+      "dont": "ห้ามละเลยการอัปเดตเอกสารโดยอ้างว่างานรีบ หรือรอทำทีเดียวตอนจบโปรเจกต์ เพราะความรู้จะหล่นหายระหว่างทาง (Knowledge Leak)",
+      "root_cause": "การขาดวินัยในการทำ Technical Documentation อย่างต่อเนื่อง",
+      "tags": [
+        "Documentation",
+        "Process",
+        "Best-Practice",
+        "Knowledge-Management"
+      ]
+    },
+    {
+      "id": "K049",
+      "date": "2026-05-10",
+      "project": "bot",
+      "task_summary": "Self-Healing AI Loop Architecture",
+      "situation": "AI Agent (Gemini) ตัดสินใจผิดพลาดในการแก้ปัญหาหน้าเว็บ (เช่น กดผิดปุ่ม, พิมพ์ผิด) ทำให้ Bot หยุดทำงานทันทีเมื่อ Error โดยไม่มีการเรียนรู้เพื่อแก้ตัว",
+      "do": "สร้างโครงสร้าง Memory (`ai_memory.json`) เพื่อเก็บประวัติข้อผิดพลาด (Failed Actions) จากนั้นสร้าง Loop (เช่น 3 รอบ) ให้ Bot เมื่อล้มเหลวให้ส่งภาพเดิมพร้อมกับข้อมูลความจำไปบอก AI ว่า 'อย่าทำแบบนี้อีก มันพัง' เพื่อบังคับให้ AI เสนอ Solution ทางเลือกใหม่",
+      "dont": "ห้ามให้ AI ลองทำสิ่งเดิมซ้ำๆ ในสถานการณ์เดิมโดยไม่มีการป้อน Error Feedback กลับไปให้ AI รับรู้ (Blind Retry) เพราะจะทำให้เสีย Token API ทิ้งเปล่า",
+      "root_cause": "พฤติกรรมดั้งเดิมของ LLM/VLM ไม่มี State ความจำระยะยาว การปล่อยให้โมเดลประมวลผลรูปแบบเดิมย่อมได้ผลลัพธ์เดิมที่พังเหมือนเดิม",
+      "tags": [
+        "AI",
+        "Self-Healing",
+        "Machine-Learning",
+        "Resilience",
+        "Architecture"
+      ]
+    },
+    {
+      "id": "K050",
+      "date": "2026-05-11",
+      "project": "iso_kpi",
+      "task_summary": "Verification of Manual Utility Scripts usage",
+      "situation": "พบไฟล์สคริปต์ (เช่น fix_fiscal_year_doc_no.php) ที่ดูเหมือนไม่มีการเรียกใช้งาน (Orphaned) ภายในโปรเจกต์",
+      "do": "1. ตรวจสอบ code ภายในเพื่อระบุหน้าที่ (เช่น One-off fix, Manual tool) 2. ใช้ grep search ทั่วทั้งโปรเจกต์เพื่อยืนยันว่าไม่มีการเรียกใช้งานจากหน้าจอหรือ API อื่น 3. บันทึกสถานะว่าเป็น Manual Tool เพื่อป้องกันความเข้าใจผิดว่าเป็นโค้ดส่วนเกิน",
+      "dont": "ห้ามลบไฟล์ทิ้งโดยไม่ได้ตรวจสอบ context เพราะบ่อยครั้งเป็นสคริปต์ที่แอดมินสร้างไว้รันด้วยมือเพื่อแก้ไขข้อมูลหลังบ้าน (One-off Utility) ซึ่งไม่จำเป็นต้องมีการเรียกใช้ผ่าน UI",
+      "root_cause": "ระบบ Legacy มักมีการสร้างสคริปต์แก้ปัญหาเฉพาะกิจทิ้งไว้ในโฟลเดอร์หลัก",
+      "tags": [
+        "Audit",
+        "Utility-Scripts",
+        "Maintenance",
+        "Verification"
+      ]
+    },
+    {
+      "id": "K051",
+      "date": "2026-05-11",
+      "project": "wangnoi_ofs",
+      "task_summary": "Full-Field Update in Force Upsert Logic",
+      "situation": "ฟังก์ชัน Force Upsert แสดงผลว่า Update สำเร็จ แต่ข้อมูลบางส่วน (เช่น SKU, Reason, Date) ใน DB ไม่เปลี่ยนตามต้นทาง",
+      "do": "ในคำสั่ง SQL UPDATE ของระบบ Upsert ต้องระบุฟิลด์ให้ครบถ้วนเหมือนคำสั่ง INSERT (รวมถึง prodate, shift, sku, starttime) เพื่อรองรับกรณีมีการแก้ไขบริบทของข้อมูลที่ต้นทาง",
+      "dont": "ห้ามอัปเดตเฉพาะฟิลด์ตัวเลข (Qty/Time) ในฟังก์ชันที่ระบุว่าเป็น 'Force' หรือ 'Manual' Upsert เพราะผู้ใช้คาดหวังการล้างข้อมูลเก่าและเขียนทับด้วยข้อมูลใหม่ที่ถูกต้องทั้งหมด",
+      "root_cause": "การออกแบบ SQL UPDATE ที่จำกัดเฉพาะบางฟิลด์เพื่อความเร็ว (Optimization) แต่ขัดกับความต้องการใช้งานจริงเมื่อมีการแก้ไข Master Data ที่ต้นทาง",
+      "tags": [
+        "PHP",
+        "SQL",
+        "Upsert",
+        "Data-Integrity",
+        "OFS",
+        "Best-Practice"
+      ]
+    },
+    {
+      "id": "K050",
+      "date": "2026-05-11",
+      "project": "iso_kpi",
+      "task_summary": "Visualizing Complex Cross-Module Logic (Follow-up Flow)",
+      "situation": "ระบบมีการทำงานข้ามโมดูล (Submission -> Approval -> Action Plan) และมีสถานะข้อมูล (State) หลายระดับ ทำให้การไล่โค้ดหรือแก้ไขทำได้ลำบากหากไม่มีภาพรวม",
+      "do": "1. สร้าง Program Flow Diagram โดยใช้ Mermaid ในไฟล์ markdown แยกต่างหาก (เช่น docs/program-flow-follow-up.md) 2. ระบุไฟล์หลักและเหตุการณ์ (Events) ที่ทำให้เกิดการเปลี่ยนผ่านของข้อมูล 3. ใช้สีหรือสัญลักษณ์แยกฝ่าย (Swimlane) หรือลำดับความรับผิดชอบให้ชัดเจน",
+      "dont": "ห้ามละเลยการอัปเดต Diagram เมื่อมีการแก้ไข Business Logic ในโค้ด และอย่าเขียนรายละเอียดโค้ด (Implementation) ลงใน Diagram มากเกินไป ให้เน้น Logical Flow เป็นหลัก",
+      "root_cause": "Business Logic ที่ซับซ้อนมักจะสูญหายหรือถูกเข้าใจผิดเมื่อเวลาผ่านไป หรือเมื่อมีการเปลี่ยนทีมงาน (Knowledge Loss Prevention)",
+      "tags": [
+        "Documentation",
+        "Program-Flow",
+        "Mermaid",
+        "Business-Logic",
+        "ISO",
+        "Best-Practice"
+      ]
+    },
+    {
+      "id": "K051",
+      "date": "2026-05-11",
+      "project": "iso_kpi",
+      "task_summary": "Configuration-driven Visibility (Action Plan Access Control)",
+      "situation": "ระบบ Action Plan มีการ hardcode สิทธิ์การมองเห็นไว้ใน SQL (เฉพาะ owner/approver) ทำให้ไม่ยืดหยุ่นเมื่อต้องการเปลี่ยนนโยบายเป็น Department-based หรือ Public Access",
+      "do": "1. เก็บค่า config ใน settings.json (key: action_plan_visibility, values: restricted/department/public) 2. สร้าง SettingsManager::getActionPlanVisibility() พร้อม whitelist validation 3. ใน API ที่ทำ SQL Query ให้ใช้ if/elseif ตามค่า config เพื่อ inject OR condition ที่ต่างกัน 4. สร้าง UI Radio Button ที่ Admin เลือกได้ พร้อม save handler ใน form เดียวกับ Permissions Matrix",
+      "dont": "ห้าม hardcode สิทธิ์การมองเห็นลงใน SQL โดยตรง เพราะทุกครั้งที่เปลี่ยนนโยบายต้องแก้โค้ดใหม่ และห้ามรับค่า visibility mode จาก URL/GET parameter เพราะ user อาจ spoof ค่าได้ (ต้องดึงจาก server-side config เท่านั้น)",
+      "root_cause": "การออกแบบ Access Control แบบ Hardcode ทำให้ระบบไม่ยืดหยุ่น เมื่อนโยบายองค์กรเปลี่ยนแปลงต้องแก้โค้ดทุกครั้ง",
+      "tags": [
+        "Architecture",
+        "Configuration",
+        "Access-Control",
+        "Security",
+        "Best-Practice",
+        "SettingsManager"
       ]
     }
   ]
