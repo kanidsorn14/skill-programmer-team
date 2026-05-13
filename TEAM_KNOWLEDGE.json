@@ -1,8 +1,129 @@
 {
   "schema_version": "1.1",
   "description": "Global Knowledge Base — ทีมโปรแกรมเมอร์ สะสมความรู้ข้ามโปรเจกต์ ห้ามลบข้อมูลเก่าเด็ดขาด",
-  "last_updated": "2026-05-11",
+  "last_updated": "2026-05-13",
   "entries": [
+    {
+      "id": "K056",
+      "date": "2026-05-13",
+      "project": "iso_kpi",
+      "task_summary": "Fiscal Year Logic & Monitoring Status for Cumulative KPIs",
+      "situation": "KPI รายไตรมาส/รายปี มักจะถูกระบบ Flag ว่า FAIL ตั้งแต่เดือนแรกๆ ทั้งที่ยังไม่จบรอบประเมิน (เช่น เป้าสะสม Q1 แต่เพิ่งกรอกเดือน ต.ค.) ทำให้เกิดการบังคับทำ Action Plan โดยไม่จำเป็น",
+      "do": "1. เพิ่มสถานะ 'MONITORING' (เฝ้าติดตาม) สำหรับ KPI ที่เป็นรายไตรมาส/รายปี ในเดือนที่ยังไม่ถึงรอบประเมิน 2. ใช้ Fiscal Month Logic (ต.ค. = เดือน 1) ในการตรวจสอบ Period End 3. ในหน้า Approval และ Action Plan กรองเอาเฉพาะสถานะ FAIL จริงๆ มาแสดงเพื่อลด Noise 4. ปรับปรุง UI ให้แสดง Badge สีเหลือง (⏳ MONITORING) เพื่อให้ผู้อนุมัติทราบว่าเป็นช่วงติดตามผล",
+      "dont": "ห้ามใช้ปฏิทินปกติ (ม.ค.-ธ.ค.) ประเมิน KPI องค์กรที่ใช้ Fiscal Year (ต.ค.-ก.ย.) และห้ามปล่อยให้ระบบบังคับทำ Action Plan ในช่วง Monitoring Phase",
+      "root_cause": "ระบบเดิมประเมินผลแบบ Real-time ตลอดเวลาโดยไม่ได้คำนึงถึงรอบการประเมินจริง (Assessment Cycle) ของ KPI แต่ละประเภท",
+      "tags": [
+        "PHP",
+        "Business-Logic",
+        "KPI",
+        "Fiscal-Year",
+        "UI/UX",
+        "Action-Plan"
+      ]
+    },
+    {
+      "id": "K055",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Data-Driven File Explorer for Action Plan attachments",
+      "situation": "ต้องการระบบ Explorer ดูไฟล์ย้อนหลังที่แสดงเฉพาะข้อมูลที่มีอยู่ในฐานข้อมูลจริง (ไม่กวาดไฟล์ขยะบน Disk)",
+      "do": "1. ใช้ SQL Query ดึงรายการจากตารางที่มีไฟล์แนบ (เช่น kpi_action_plan) 2. นำผลลัพธ์มาจัดโครงสร้างแบบ Nested Array (Tree) ใน Backend ก่อนส่งให้ Frontend 3. เพิ่ม Metadata เช่น org_id, month, year ลงใน Folder node เพื่อใช้เชื่อมโยงไปยัง Report อื่นๆ ได้ทันที",
+      "dont": "อย่าใช้ scandir() กวาดไฟล์บน Disk มาโชว์ตรงๆ เพราะจะทำให้เห็นไฟล์เก่าที่ถูกลบไปแล้วในระบบ หรือไฟล์ที่ไม่มีความเชื่อมโยงกับฐานข้อมูล",
+      "root_cause": "ต้องการความซิงโครไนซ์ระหว่างไฟล์ใน Disk และข้อมูลใน Database",
+      "tags": [
+        "PHP",
+        "SQL",
+        "File-Management",
+        "UX"
+      ]
+    },
+    {
+      "id": "K054",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Action Plan Data Grouping (1 Doc = 1 Action Plan)",
+      "situation": "ISO ต้องการให้รวม KPI ทุกข้อที่ตกเกณฑ์ในเอกสาร (Doc No) เดียวกัน ให้ทำ Action Plan ส่งมาในรอบเดียว (แนบไฟล์เดียวแก้หมด)",
+      "do": "1. เปลี่ยนโครงสร้างความสัมพันธ์ใน kpi_action_plan ให้ยึดตาม submission_id แทน result_id 2. ตอนสร้าง (approval_action.php) ให้เช็คถ้ามี is_follow_up=1 แม้แต่ข้อเดียว ให้สร้าง 1 Action Plan 3. ตอนดึงมาโชว์ (api_action_plan.php) ให้ใช้วิธี Query ซ้อน (Subquery) หรือส่ง id ของ submission ไปหารายการ KPI ที่ตก (failed_kpis) แนบมากับแต่ละ Action Plan",
+      "dont": "ห้ามสร้าง kpi_action_plan แบบวนลูปตามจำนวนข้อที่ตก (1:1) เพราะจะทำให้ User ต้องแนบไฟล์และเขียนอธิบายซ้ำซ้อนกันในเอกสารเดียวกัน",
+      "root_cause": "Business Requirement ของ ISO คือการส่ง Action Plan เป็นเอกสารรวม (1 Monthly Report = 1 Action Plan)",
+      "tags": [
+        "Database",
+        "Data-Grouping",
+        "Action-Plan",
+        "PHP"
+      ]
+    },
+    {
+      "id": "K053",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Virtual Folder View for Action Plan Documents (UNC Path)",
+      "situation": "ผู้ใช้งานต้องการเข้าถึงไฟล์ที่เก็บใน Share Drive (UNC Path) ผ่าน Web UI ในรูปแบบที่คุ้นเคยเหมือน Windows Explorer (Year > Dept > Files)",
+      "do": "1. ใช้ recursive directory scanning (scandir) ฝั่ง Backend เพื่อสร้าง JSON Tree 2. กรองเฉพาะโฟลเดอร์ที่มีไฟล์ Approved 3. ใช้ CSS Grid และ FontAwesome สร้าง UI แบบ Folder/File Browser 4. ใช้ API Gateway (serve_file) เพื่อสตรีมไฟล์จาก UNC Path 5. ติดตั้งในรูปแบบ Tab 'Action Plan' ใน Dashboard หลักเพื่อลดความรกของ Navbar",
+      "dont": "ห้ามทำ Directory Listing แบบ Raw หรือใช้ชื่อเมนูว่า Archive ให้ใช้ชื่อ 'Action Plan' เพื่อให้สื่อสารตรงกับ Business Module และช่วยให้ Navbar สะอาดขึ้น",
+      "root_cause": "ข้อจำกัดของ Browser ในการเข้าถึง Network Drive และความต้องการ UX ที่คุ้นเคย (Explorer Model) ในพื้นที่ Dashboard เดียวกัน",
+      "tags": [
+        "UI/UX",
+        "UNC-Path",
+        "Action-Plan",
+        "PHP",
+        "SaaS-Design",
+        "Tab-Integration"
+      ]
+    },
+    {
+      "id": "K052",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "UI Pattern for Detailed Audit Transitions",
+      "situation": "การแสดงผล Audit Log ที่มีข้อมูลดิบ (เช่น 1.050000 -> 1.05) ดูยากและไม่สื่อสารความหมายได้ดีพอ",
+      "do": "ใช้ Regex ในฝั่ง View เพื่อ Parse ข้อมูลดิบออกมาจัดรูปแบบใหม่: 1. ใส่ตัวหนา (bold) ที่ชื่อ KPI/Variable 2. ใช้ CSS ขีดฆ่า (line-through) ที่ค่าเก่า 3. ใช้สีเขียวและตัวหนาที่ค่าใหม่เพื่อเน้นการเปลี่ยนแปลง 4. ใช้สัญลักษณ์ &rarr; แทนลูกศรข้อความธรรมดา",
+      "dont": "ห้ามเก็บ Tag HTML ลงใน Database Field ที่ใช้เก็บ Log เพราะจะทำให้การ Query หรือส่งออกข้อมูล (Export) พัง และจำกัดความสามารถในการนำข้อมูลไปใช้ใน Platform อื่น",
+      "root_cause": "ข้อมูลดิบใน Log มีไว้เพื่อความถูกต้องของข้อมูล (Data Integrity) แต่ UI ต้องการความชัดเจนในการอ่าน (Readability)",
+      "tags": [
+        "UI/UX",
+        "Audit Log",
+        "Regex",
+        "PHP",
+        "CSS",
+        "Pattern"
+      ]
+    },
+    {
+      "id": "K051",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Granular Audit Logging for Data Transitions",
+      "situation": "ผู้ใช้ต้องการตรวจสอบย้อนหลังว่าในการแก้ไขข้อมูล KPI แต่ละครั้ง มีการเปลี่ยนตัวเลขจากค่าอะไรเป็นค่าอะไร และเปลี่ยนที่ตัวแปรไหนบ้าง เพื่อความโปร่งใส (Traceability)",
+      "do": "1. ก่อนการ Save/Submit ให้ดึงข้อมูลเดิมจาก Database มาเก็บไว้ใน Array 2. วนลูปเปรียบเทียบค่าจาก $_POST กับค่าเดิมทีละตัวแปร 3. ใช้ MasterVariable lookup เพื่อเปลี่ยน ID ให้เป็นชื่อตัวแปรที่คนอ่านรู้เรื่อง 4. บันทึก Log ในรูปแบบ `[KPI Name]: [Variable Name] ([Old] -> [New])` และรวมหลายรายการด้วยตัวคั่นพิเศษ (เช่น |||) เพื่อนำไปแสดงผลแบบ Bullet Points ใน UI",
+      "dont": "ห้ามบันทึกแค่ 'แก้ไขข้อมูล KPI' หรือบันทึกเฉพาะค่าใหม่โดยไม่มีค่าเดิม เพราะจะทำให้การตรวจสอบย้อนหลัง (Audit) ทำได้ยากและไม่สามารถระบุจุดผิดพลาดที่ชัดเจนได้",
+      "root_cause": "ระบบเดิมบันทึกประวัติการแก้ไขแบบหยาบ (Header Level) ทำให้ไม่สามารถตอบคำถาม 'ใครแก้ตัวเลขไหน' ได้อย่างแม่นยำ",
+      "tags": [
+        "PHP",
+        "Audit Log",
+        "Traceability",
+        "Data Integrity",
+        "Business Logic"
+      ]
+    },
+    {
+      "id": "K050",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Permission Granularity in Multi-action APIs",
+      "situation": "User (Issuer) ไม่สามารถดูประวัติเอกสาร (History) ได้ และได้รับข้อความ 'คุณไม่มีสิทธิ์' เนื่องจากไฟล์ API มีการเช็ค isAdmin() แบบ Global ไว้ที่หัวไฟล์",
+      "do": "1. ย้ายการเช็คสิทธิ์แบบเข้มงวด (เช่น isAdmin) ไปไว้เฉพาะใน Action ที่จำเป็น (load/save) 2. สำหรับ Action ที่เป็นข้อมูลสาธารณะหรือข้อมูลส่วนตัว (เช่น get_history) ให้เพิ่ม Logic เช็คสิทธิ์ตามความเป็นเจ้าของ (Ownership: owner_empcode) หรือเช็ครายชื่อในสายอนุมัติ (Approval Chain) แทนการใช้สิทธิ์แอดมินเพียงอย่างเดียว",
+      "dont": "ห้ามใช้การเช็คสิทธิ์แบบหว่านแห (Global Check) ในไฟล์ API ที่รวบรวมหลายฟังก์ชันเข้าด้วยกัน เพราะจะทำให้เกิด Visibility Gap สำหรับผู้ใช้ทั่วไปที่มีสิทธิ์เข้าถึงข้อมูลบางส่วน",
+      "root_cause": "การออกแบบ Security Middleware แบบ 'One-size-fits-all' บล็อกการเข้าถึงฟังก์ชันย่อยที่ควรเปิดให้ผู้ใช้ที่มีส่วนเกี่ยวข้องเข้าใช้งานได้",
+      "tags": [
+        "PHP",
+        "Security",
+        "Authorization",
+        "API",
+        "Bug",
+        "Permission"
+      ]
+    },
     {
       "id": "K001",
       "date": "2026-04-30",
@@ -888,6 +1009,188 @@
         "Context-Restoration",
         "Modal",
         "Workflow",
+        "Best-Practice"
+      ]
+    },
+    {
+      "id": "K053",
+      "date": "2026-05-11",
+      "project": "wangnoi_ofs",
+      "task_summary": "Multi-Shift Data Synchronization Pattern (API Optimization)",
+      "situation": "สคริปต์ Sync ข้อมูลอัตโนมัติ (Task Scheduler) ทำงานผิดพลาดหรือข้อมูลตกหล่นในช่วงรอยต่อกะ เพราะรันด้วยพารามิเตอร์เฉพาะกะปัจจุบัน ทำให้ไม่ได้รับข้อมูลที่ล่าช้าของกะก่อนหน้า",
+      "do": "1. ปรับปรุง API request โดยตัดพารามิเตอร์ filter (เช่น shift) ออก เพื่อให้ API ส่งข้อมูลทั้งหมดของวันนั้นๆ กลับมา 2. ใช้ระบบ Upsert (Update or Insert) ที่อิงตาม Unique Key (เช่น span_id) เพื่อให้การรันซ้ำสามารถอัปเดตข้อมูลเก่าให้เป็นปัจจุบันได้เสมอ 3. วิธีนี้ช่วยให้สคริปต์ที่รันทุกชั่วโมงสามารถ 'ซ่อมแซม' ข้อมูลของกะก่อนหน้าได้โดยอัตโนมัติหากมีการเปลี่ยนแปลง",
+      "dont": "ห้ามจำกัดการดึงข้อมูลเฉพาะช่วงเวลาสั้นๆ (กะปัจจุบัน) ในสคริปต์ประเภท Background Sync หากตัว API และ Database รองรับการทำ Idempotent Upsert ได้ เพราะจะทำให้เสียโอกาสในการทำ Self-healing ให้กับข้อมูล",
+      "root_cause": "การออกแบบการดึงข้อมูลแบบแยกส่วน (Granular Fetching) ในระบบ Background Job ทำให้ข้อมูลที่เกิดการแก้ไขย้อนหลังไม่ถูกนำมาอัปเดต",
+      "tags": [
+        "Architecture",
+        "API",
+        "Data-Integrity",
+        "Self-Healing",
+        "Task-Scheduler",
+        "Best-Practice"
+      ]
+    },
+    {
+      "id": "K005",
+      "timestamp": "2026-05-11T12:00:00Z",
+      "author": "Tan (Knowledge)",
+      "project": "ISO KPI",
+      "type": "Architecture",
+      "title": "เพิ่ม Workflow สำหรับ Manager Approval ในส่วน Action Plan",
+      "situation": "ผู้ใช้ต้องการเพิ่มชั้นการอนุมัติ (Manager Approval) หลังจากผู้ใช้แนบไฟล์ Action Plan แล้ว ก่อนที่เอกสารจะถึง ISO เพื่อให้ Manager ช่วยกรองอีกชั้นหนึ่ง และต้องการให้ระบบตั้งค่านี้เปิด/ปิดได้",
+      "do": [
+        "1. สร้าง Method `isActionPlanManagerApprovalEnabled` ใน `SettingsManager.php` เพื่ออ่านค่าจาก `settings.json`",
+        "2. เพิ่มสวิตช์หน้า UI ใน `system_management.php`",
+        "3. ปรับ `save_dept` ใน `api_action_plan.php` ให้ส่งเข้าสถานะ `PENDING_MANAGER` หากเปิดใช้งานการตั้งค่า",
+        "4. เพิ่ม `review_manager` Action ใน `api_action_plan.php` เพื่อรับการเปลี่ยนสถานะจาก Manager",
+        "5. เพิ่มสถานะ `PENDING_MANAGER` เข้าไปใน _tabMap ฝั่ง Client ภายในหน้า `follow_up_dashboard.php` ของฝั่งแผนก (กรณี user=Manager)"
+      ],
+      "dont": [
+        "ห้ามอัปเดตสถานะแบบ Hardcode ให้เช็คผ่าน SettingsManager เสมอเพื่อความยืดหยุ่น",
+        "ห้ามทำให้ ISO มองไม่เห็นปุ่มตรวจสอบหากสถานะมันข้ามมา หรือกรณีที่ปิด Manager Approval ไปแล้ว"
+      ],
+      "tags": [
+        "Workflow",
+        "Approval",
+        "Settings",
+        "Action Plan"
+      ]
+    },
+    {
+      "id": "K054",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Dynamic Manager Lookup via Logs & HR Services",
+      "situation": "ระบบต้องหาผู้อนุมัติ (Manager) ขั้นถัดไปโดยอัตโนมัติ ซึ่งอาจจะอ้างอิงจากผู้ที่เคยอนุมัติเอกสารล่าสุด หรือถ้าไม่มีในประวัติให้ไปหาจากระบบ HR ส่วนกลางแทน เพื่อป้องกัน Workflow ค้าง",
+      "do": "1. ใช้ตารางประวัติการอนุมัติ (`approval_log`) หาผู้อนุมัติล่าสุด (`action = 'APPROVED'`) โดยเรียงตามวันที่ล่าสุด 2. ถ้าไม่พบ (เช่น เป็นเอกสารใหม่ หรือไม่มีประวัติ) ให้ดึง username ของเจ้าของเอกสาร แล้วนำไปค้นหาผู้อนุมัติผ่าน `ApprovalService::getApprovers($username)` เพื่อใช้เป็น Fallback 3. ตรวจสอบสิทธิ์การมองเห็นปุ่ม/หน้าจอโดยเปรียบเทียบ Session Username/Empcode กับข้อมูล Manager ที่พบ",
+      "dont": "ห้ามบังคับให้ผู้ใช้ต้องเลือก Manager เองถ้าสามารถหาจากประวัติหรือโครงสร้าง HR ได้ และห้ามปล่อยให้ระบบทำงานต่อโดยไม่มี Fallback (เช่น Manager = NULL) เพราะจะทำให้ Workflow ค้างไม่มีคนอนุมัติต่อ",
+      "root_cause": "การออกแบบ Workflow ที่ยึดติดกับสายการอนุมัติแบบตายตัว (Static Routing) มักจะมีปัญหาเมื่อมีการส่งกลับไปแก้ไข (Rework) จึงต้องใช้ประวัติมาช่วยหาผู้อนุมัติที่แท้จริง",
+      "tags": [
+        "Architecture",
+        "Workflow",
+        "Dynamic-Lookup",
+        "Fallback",
+        "Approval",
+        "Best-Practice"
+      ]
+    },
+    {
+      "id": "K051",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Personalized Multi-recipient Email Notifications",
+      "situation": "การส่งอีเมลแจ้งเตือนหาผู้รับหลายคน (เช่น ISO Team) โดยใช้คำขึ้นต้นแบบเหมารวม (เช่น เรียน ทีมงาน ISO) ทำให้เมื่ออีเมลถูก Redirect ไปยังกล่องทดสอบเดียวกัน (Test Mode) ผู้ใช้จะแยกไม่ออกว่าระบบส่งซ้ำ (Bug) หรือส่งหาหลายคนจริงๆ",
+      "do": "1. ปรับ Query ให้ดึงทั้ง `email` และ `name` ของผู้รับทุกคน 2. ปรับฟังก์ชันส่งอีเมลให้รองรับการส่งแบบวนลูปรายบุคคล (Personalized) โดยระบุชื่อผู้รับในคำขึ้นต้น (เช่น เรียน คุณ สมชาย) 3. ในโหมดทดสอบ (Test Mode) ให้ใช้ระบบ Deduplication (เช่น static cache ของ subject+email) เพื่อป้องกันการส่งอีเมลที่เนื้อหาซ้ำซ้อนกันเกินความจำเป็น",
+      "dont": "ห้ามส่งอีเมลหากลุ่มบุคคลโดยใช้คำขึ้นต้นแบบ Generic (เหมารวม) หากสามารถระบุชื่อรายบุคคลได้ เพราะจะทำให้ขาดความชัดเจนในการสื่อสาร (Traceability) และทำให้ผู้ใช้สับสนเรื่องการส่งซ้ำในโหมดทดสอบ",
+      "root_cause": "การใช้เนื้อหาอีเมลแบบคงที่ (Static Content) สำหรับผู้รับหลายคน ทำให้ขาดความเฉพาะเจาะจงและลดความเชื่อมั่นในความถูกต้องของระบบการแจ้งเตือน",
+      "tags": [
+        "PHP",
+        "Email",
+        "UX",
+        "Traceability",
+        "Notification",
+        "Personalization"
+      ]
+    },
+    {
+      "id": "K052",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Button State Reset Pattern in Persistent Modals",
+      "situation": "ปุ่มใน Modal ถูก Disable ระหว่างบันทึกข้อมูล (เพื่อป้องกันการกดย้ำ) แต่เมื่อบันทึกเสร็จหรือเกิด Error แล้วไม่ได้รีเซ็ตสถานะกลับมา ทำให้ผู้ใช้ไม่สามารถกดปุ่มเดิมได้อีกจนกว่าจะรีเฟรชหน้าจอ",
+      "do": "1. สร้างฟังก์ชันรีเซ็ตสถานะปุ่ม (Re-enable) ในจุดที่ปิด Modal หรือใน `catch/finally` ของ AJAX Call 2. ในหน้า Dashboard ที่ใช้ Modal ซ้ำๆ ควรใส่คำสั่งเปิดใช้งานปุ่ม (`.disabled = false`) ทันทีที่เปิด Modal (Open Trigger) เพื่อความชัวร์ว่าปุ่มจะไม่ค้างสถานะจากรอบที่แล้ว",
+      "dont": "ห้าม Disable ปุ่มโดยไม่มีคู่คำสั่ง Enable กลับคืนในทุกสถานการณ์ (Success/Fail/Close) เพราะจะทำให้เกิด UI Deadlock ที่ผู้ใช้ไม่สามารถแก้ไขได้เอง",
+      "root_cause": "การลืมจัดการ State Lifecycle ของปุ่มใน Single Page Interface ที่มีการใช้ Modal ซ้ำ (State Leakage)",
+      "tags": [
+        "JS",
+        "UI",
+        "Bug",
+        "State-Management",
+        "UX",
+        "Modal"
+      ]
+    },
+    {
+      "id": "K053",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Robust Manager Lookup & Identification Strategy",
+      "situation": "การระบุตัวตนผู้จัดการ (Manager) ในระบบที่ข้อมูลอาจกระจัดกระจาย (เช่น บางใบงานเก็บ code บางใบงานไม่มี) ทำให้ระบบส่งอีเมลหาผู้จัดการผิดคน หรือหาไม่เจอ",
+      "do": "1. ใช้ `emp_code` (รหัสพนักงาน) เป็นแกนหลักในการระบุตัวตนแทน `username` เพื่อป้องกันปัญหาคอลัมน์ไม่ตรงกันใน Legacy HR DB 2. ใช้กลยุทธ์ **Multi-layer Fallback**: เริ่มจากดึงจาก `kpi_submission` (ถ้ามี) -> ถ้าไม่มีให้ดึงจาก `ApprovalService` (สายงานปัจจุบัน) -> ถ้ายังไม่มีให้ดึงจากประวัติการอนุมัติล่าสุด (Approval Log) 3. ตรวจสอบสถานะ `is_active` ของผู้จัดการก่อนส่งอีเมลเสมอ",
+      "dont": "ห้ามพึ่งพาแหล่งข้อมูลเพียงแหล่งเดียวในการหาผู้อนุมัติ (เช่น SQL Join ตารางเดียว) เพราะในระบบ Workflow ที่ซับซ้อน ข้อมูลสายงานอาจเปลี่ยนแปลงได้ตามกาลเวลา",
+      "root_cause": "ข้อมูลผู้อนุมัติในอดีต (Historical Data) กับข้อมูลสายงานปัจจุบัน (Real-time Org) อาจไม่ตรงกัน การใช้ Fallback Logic ช่วยให้ระบบมีความยืดหยุ่นสูงขึ้น",
+      "tags": [
+        "PHP",
+        "Workflow",
+        "Manager-Approval",
+        "Data-Integrity",
+        "Fallback-Strategy"
+      ]
+    },
+    {
+      "id": "K054",
+      "date": "2026-05-12",
+      "project": "iso_kpi",
+      "task_summary": "Unified Visibility Logic across List and Detail APIs",
+      "situation": "ผู้ใช้เห็นรายการเอกสารในหน้า Dashboard (List) แต่พอกดเข้าไปดูรายละเอียด (Detail/Modal) กลับขึ้นว่า 'ไม่มีสิทธิ์' หรือ 'ไม่พบข้อมูล' เนื่องจาก SQL Filter ของสองจุดนี้ทำงานไม่เหมือนกัน",
+      "do": "1. แยก Logic การกรองสิทธิ์ (Visibility Filter) ออกมาเป็นฟังก์ชันกลางหรือ SQL Snippet ชุดเดียวกัน 2. เมื่อมีการตั้งค่าสิทธิ์ใหม่ (เช่น Restricted/Department/Public) ต้องตามไปอัปเดต SQL WHERE clause ในทุก API ที่เกี่ยวข้อง (ทั้งหน้า List, หน้า Modal และหน้า Download) 3. ทดสอบด้วย User หลายระดับ (Role-based testing) ทุกครั้งที่มีการแก้ Visibility Logic",
+      "dont": "ห้ามเขียน SQL กรองสิทธิ์แยกกันในแต่ละไฟล์แบบ Hardcode (Inconsistent Logic) เพราะจะทำให้เกิดบัค 'เห็นแต่กดไม่ได้' เมื่อมีการเปลี่ยนเงื่อนไขสิทธิ์ในอนาคต",
+      "root_cause": "การกระจายตัวของ Business Logic (Logic Fragmentation) ในหลาย Endpoint ทำให้การบำรุงรักษาทำได้ยากและเกิดความผิดพลาดได้ง่าย",
+      "tags": [
+        "SQL",
+        "API",
+        "Security",
+        "Visibility",
+        "Inconsistency",
+        "Best-Practice"
+    },
+    {
+      "id": "K055",
+      "date": "2026-05-13",
+      "project": "iso_kpi",
+      "task_summary": "Bento Grid / Stacked Cards for Complex Table Data",
+      "situation": "ผู้ใช้บอกว่า UI ที่แบ่ง 2 คอลัมน์ (ชื่อ KPI กับ เป้า/ผล) อ่านยาก สับสนบรรทัดเมื่อมีข้อมูลยาว และขอดูการแสดงผลแบบใหม่ที่ดู Premium ขึ้น",
+      "do": "ยุบรวมคอลัมน์ที่มีความเกี่ยวข้องกัน (เช่น ชื่อเรื่อง + ตัวเลขเป้าหมาย + ตัวเลขผลลัพธ์) เข้าไว้ใน <td> เดียว แล้วจัด Layout ภายในด้วย CSS Flexbox แบบ Bento Grid หรือ Stacked Cards โดยให้ข้อมูล 1 ชุด (1 KPI) อยู่ในกล่อง (.kpi-card) ของตัวเอง มี Background อ่อนๆ, Border สวยๆ, และทำ Hover effect ยกตัวเล็กน้อย (translateY) เพื่อยกระดับความน่าใช้ (SaaS Feel)",
+      "dont": "ห้ามฝืนแยกข้อมูลที่มีความสัมพันธ์กันมากในระดับหน่วยย่อย (Sub-items) ออกเป็นหลายๆ คอลัมน์ เพราะการพึ่งพาการตรงกันของบรรทัด (Line alignment) จะพังทันทีเมื่อเจอการตัดคำ (Text wrapping)",
+      "root_cause": "การแบ่งคอลัมน์ใน HTML Table ออกแบบมาสำหรับข้อมูล 1 แถวต่อ 1 ชุดข้อมูล หากฝืนยัด List เข้าไปในคอลัมน์แยกกัน จะทำให้เกิดปัญหาเรื่องบรรทัดไม่ตรงกันและอ่านยาก",
+      "tags": [
+        "UI",
+        "UX",
+        "Design",
+        "Table",
+        "CSS",
+        "SaaS"
+    },
+    {
+      "id": "K056",
+      "date": "2026-05-13",
+      "project": "iso_kpi",
+      "task_summary": "Toggle File Preview vs Download via Inline Parameter",
+      "situation": "ผู้ใช้ต้องการเปิดดูไฟล์ (Preview) ทันทีที่คลิก แทนการบังคับดาวน์โหลดเพียงอย่างเดียว แต่ยังต้องการปุ่มดาวน์โหลดแยกต่างหาก",
+      "do": "1. ในฝั่ง Server (PHP) ให้รับพารามิเตอร์เช่น `inline=1` เพื่อสลับ Header `Content-Disposition` ระหว่าง `inline` (สำหรับเปิดดู) และ `attachment` (สำหรับดาวน์โหลด) 2. ในฝั่ง UI ให้แยก Trigger ออกจากกัน เช่น คลิกที่กล่องไฟล์ให้เปิด Window.open แบบ `inline=1` และเพิ่มปุ่มไอคอนขนาดเล็กแยกต่างหากสำหรับดาวน์โหลดแบบปกติ",
+      "dont": "ห้ามใช้ `Content-Disposition: attachment` อย่างเดียวสำหรับไฟล์เอกสาร เพราะจะทำให้ User ประสบการณ์ขาดตอนจากการที่ต้องหาที่บันทึกไฟล์ก่อนเปิดดูเสมอ",
+      "root_cause": "การบังคับดาวน์โหลด (Attachment) เป็นพฤติกรรมดั้งเดิมของ Browser สำหรับไฟล์ที่ไม่ใช่ HTML แต่สำหรับ PDF/Images ยุคใหม่สามารถ Render ได้ทันที การเปิดทางเลือกให้ Preview จึงสำคัญต่อ UX",
+      "tags": [
+        "PHP",
+        "Header",
+        "UX",
+        "File-Management",
+        "Preview"
+    },
+    {
+      "id": "K057",
+      "date": "2026-05-13",
+      "project": "iso_kpi",
+      "task_summary": "Client-side File Type Detection for Modal Preview",
+      "situation": "ต้องการให้ไฟล์บางประเภท (PDF, Image) แสดงใน Modal แต่ไฟล์บางประเภท (Excel, Word) ให้ดาวน์โหลดทันที",
+      "do": "1. ใช้ JavaScript ตรวจสอบนามสกุลไฟล์ (Extension) ก่อนดำเนินการ 2. หากเป็น 'pdf', 'jpg', 'png' ให้เปิด Modal ที่มี `<iframe>` หรือ `<img>` 3. หากเป็นประเภทอื่นให้เปลี่ยนไปใช้ `window.location` หรือสร้าง `<a>` tag เพื่อสั่ง download แทน",
+      "dont": "ห้ามพยายามยัดไฟล์ Excel/Word ลงใน `<iframe>` เพราะ Browser จะไม่แสดงผลและอาจเกิดพฤติกรรมที่ไม่คาดคิดในบาง Browser",
+      "root_cause": "ข้อจำกัดของ Browser ในการแสดงผลไฟล์ Binary เฉพาะทาง (Proprietary formats) ทำให้ต้องมีการคัดกรองประเภทไฟล์ก่อนแสดงผล",
+      "tags": [
+        "JavaScript",
+        "UI",
+        "Modal",
+        "File-Type",
         "Best-Practice"
       ]
     }
