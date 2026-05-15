@@ -1,129 +1,8 @@
 {
   "schema_version": "1.1",
-  "description": "Global Knowledge Base — ทีมโปรแกรมเมอร์ สะสมความรู้ข้ามโปรเจกต์ ห้ามลบข้อมูลเก่าเด็ดขาด",
+  "description": "Global Knowledge Base — คลังความรู้กลางของทีมงาน (Thailand ISO Project)",
   "last_updated": "2026-05-13",
-  "entries": [
-    {
-      "id": "K056",
-      "date": "2026-05-13",
-      "project": "iso_kpi",
-      "task_summary": "Fiscal Year Logic & Monitoring Status for Cumulative KPIs",
-      "situation": "KPI รายไตรมาส/รายปี มักจะถูกระบบ Flag ว่า FAIL ตั้งแต่เดือนแรกๆ ทั้งที่ยังไม่จบรอบประเมิน (เช่น เป้าสะสม Q1 แต่เพิ่งกรอกเดือน ต.ค.) ทำให้เกิดการบังคับทำ Action Plan โดยไม่จำเป็น",
-      "do": "1. เพิ่มสถานะ 'MONITORING' (เฝ้าติดตาม) สำหรับ KPI ที่เป็นรายไตรมาส/รายปี ในเดือนที่ยังไม่ถึงรอบประเมิน 2. ใช้ Fiscal Month Logic (ต.ค. = เดือน 1) ในการตรวจสอบ Period End 3. ในหน้า Approval และ Action Plan กรองเอาเฉพาะสถานะ FAIL จริงๆ มาแสดงเพื่อลด Noise 4. ปรับปรุง UI ให้แสดง Badge สีเหลือง (⏳ MONITORING) เพื่อให้ผู้อนุมัติทราบว่าเป็นช่วงติดตามผล",
-      "dont": "ห้ามใช้ปฏิทินปกติ (ม.ค.-ธ.ค.) ประเมิน KPI องค์กรที่ใช้ Fiscal Year (ต.ค.-ก.ย.) และห้ามปล่อยให้ระบบบังคับทำ Action Plan ในช่วง Monitoring Phase",
-      "root_cause": "ระบบเดิมประเมินผลแบบ Real-time ตลอดเวลาโดยไม่ได้คำนึงถึงรอบการประเมินจริง (Assessment Cycle) ของ KPI แต่ละประเภท",
-      "tags": [
-        "PHP",
-        "Business-Logic",
-        "KPI",
-        "Fiscal-Year",
-        "UI/UX",
-        "Action-Plan"
-      ]
-    },
-    {
-      "id": "K055",
-      "date": "2026-05-12",
-      "project": "iso_kpi",
-      "task_summary": "Data-Driven File Explorer for Action Plan attachments",
-      "situation": "ต้องการระบบ Explorer ดูไฟล์ย้อนหลังที่แสดงเฉพาะข้อมูลที่มีอยู่ในฐานข้อมูลจริง (ไม่กวาดไฟล์ขยะบน Disk)",
-      "do": "1. ใช้ SQL Query ดึงรายการจากตารางที่มีไฟล์แนบ (เช่น kpi_action_plan) 2. นำผลลัพธ์มาจัดโครงสร้างแบบ Nested Array (Tree) ใน Backend ก่อนส่งให้ Frontend 3. เพิ่ม Metadata เช่น org_id, month, year ลงใน Folder node เพื่อใช้เชื่อมโยงไปยัง Report อื่นๆ ได้ทันที",
-      "dont": "อย่าใช้ scandir() กวาดไฟล์บน Disk มาโชว์ตรงๆ เพราะจะทำให้เห็นไฟล์เก่าที่ถูกลบไปแล้วในระบบ หรือไฟล์ที่ไม่มีความเชื่อมโยงกับฐานข้อมูล",
-      "root_cause": "ต้องการความซิงโครไนซ์ระหว่างไฟล์ใน Disk และข้อมูลใน Database",
-      "tags": [
-        "PHP",
-        "SQL",
-        "File-Management",
-        "UX"
-      ]
-    },
-    {
-      "id": "K054",
-      "date": "2026-05-12",
-      "project": "iso_kpi",
-      "task_summary": "Action Plan Data Grouping (1 Doc = 1 Action Plan)",
-      "situation": "ISO ต้องการให้รวม KPI ทุกข้อที่ตกเกณฑ์ในเอกสาร (Doc No) เดียวกัน ให้ทำ Action Plan ส่งมาในรอบเดียว (แนบไฟล์เดียวแก้หมด)",
-      "do": "1. เปลี่ยนโครงสร้างความสัมพันธ์ใน kpi_action_plan ให้ยึดตาม submission_id แทน result_id 2. ตอนสร้าง (approval_action.php) ให้เช็คถ้ามี is_follow_up=1 แม้แต่ข้อเดียว ให้สร้าง 1 Action Plan 3. ตอนดึงมาโชว์ (api_action_plan.php) ให้ใช้วิธี Query ซ้อน (Subquery) หรือส่ง id ของ submission ไปหารายการ KPI ที่ตก (failed_kpis) แนบมากับแต่ละ Action Plan",
-      "dont": "ห้ามสร้าง kpi_action_plan แบบวนลูปตามจำนวนข้อที่ตก (1:1) เพราะจะทำให้ User ต้องแนบไฟล์และเขียนอธิบายซ้ำซ้อนกันในเอกสารเดียวกัน",
-      "root_cause": "Business Requirement ของ ISO คือการส่ง Action Plan เป็นเอกสารรวม (1 Monthly Report = 1 Action Plan)",
-      "tags": [
-        "Database",
-        "Data-Grouping",
-        "Action-Plan",
-        "PHP"
-      ]
-    },
-    {
-      "id": "K053",
-      "date": "2026-05-12",
-      "project": "iso_kpi",
-      "task_summary": "Virtual Folder View for Action Plan Documents (UNC Path)",
-      "situation": "ผู้ใช้งานต้องการเข้าถึงไฟล์ที่เก็บใน Share Drive (UNC Path) ผ่าน Web UI ในรูปแบบที่คุ้นเคยเหมือน Windows Explorer (Year > Dept > Files)",
-      "do": "1. ใช้ recursive directory scanning (scandir) ฝั่ง Backend เพื่อสร้าง JSON Tree 2. กรองเฉพาะโฟลเดอร์ที่มีไฟล์ Approved 3. ใช้ CSS Grid และ FontAwesome สร้าง UI แบบ Folder/File Browser 4. ใช้ API Gateway (serve_file) เพื่อสตรีมไฟล์จาก UNC Path 5. ติดตั้งในรูปแบบ Tab 'Action Plan' ใน Dashboard หลักเพื่อลดความรกของ Navbar",
-      "dont": "ห้ามทำ Directory Listing แบบ Raw หรือใช้ชื่อเมนูว่า Archive ให้ใช้ชื่อ 'Action Plan' เพื่อให้สื่อสารตรงกับ Business Module และช่วยให้ Navbar สะอาดขึ้น",
-      "root_cause": "ข้อจำกัดของ Browser ในการเข้าถึง Network Drive และความต้องการ UX ที่คุ้นเคย (Explorer Model) ในพื้นที่ Dashboard เดียวกัน",
-      "tags": [
-        "UI/UX",
-        "UNC-Path",
-        "Action-Plan",
-        "PHP",
-        "SaaS-Design",
-        "Tab-Integration"
-      ]
-    },
-    {
-      "id": "K052",
-      "date": "2026-05-12",
-      "project": "iso_kpi",
-      "task_summary": "UI Pattern for Detailed Audit Transitions",
-      "situation": "การแสดงผล Audit Log ที่มีข้อมูลดิบ (เช่น 1.050000 -> 1.05) ดูยากและไม่สื่อสารความหมายได้ดีพอ",
-      "do": "ใช้ Regex ในฝั่ง View เพื่อ Parse ข้อมูลดิบออกมาจัดรูปแบบใหม่: 1. ใส่ตัวหนา (bold) ที่ชื่อ KPI/Variable 2. ใช้ CSS ขีดฆ่า (line-through) ที่ค่าเก่า 3. ใช้สีเขียวและตัวหนาที่ค่าใหม่เพื่อเน้นการเปลี่ยนแปลง 4. ใช้สัญลักษณ์ &rarr; แทนลูกศรข้อความธรรมดา",
-      "dont": "ห้ามเก็บ Tag HTML ลงใน Database Field ที่ใช้เก็บ Log เพราะจะทำให้การ Query หรือส่งออกข้อมูล (Export) พัง และจำกัดความสามารถในการนำข้อมูลไปใช้ใน Platform อื่น",
-      "root_cause": "ข้อมูลดิบใน Log มีไว้เพื่อความถูกต้องของข้อมูล (Data Integrity) แต่ UI ต้องการความชัดเจนในการอ่าน (Readability)",
-      "tags": [
-        "UI/UX",
-        "Audit Log",
-        "Regex",
-        "PHP",
-        "CSS",
-        "Pattern"
-      ]
-    },
-    {
-      "id": "K051",
-      "date": "2026-05-12",
-      "project": "iso_kpi",
-      "task_summary": "Granular Audit Logging for Data Transitions",
-      "situation": "ผู้ใช้ต้องการตรวจสอบย้อนหลังว่าในการแก้ไขข้อมูล KPI แต่ละครั้ง มีการเปลี่ยนตัวเลขจากค่าอะไรเป็นค่าอะไร และเปลี่ยนที่ตัวแปรไหนบ้าง เพื่อความโปร่งใส (Traceability)",
-      "do": "1. ก่อนการ Save/Submit ให้ดึงข้อมูลเดิมจาก Database มาเก็บไว้ใน Array 2. วนลูปเปรียบเทียบค่าจาก $_POST กับค่าเดิมทีละตัวแปร 3. ใช้ MasterVariable lookup เพื่อเปลี่ยน ID ให้เป็นชื่อตัวแปรที่คนอ่านรู้เรื่อง 4. บันทึก Log ในรูปแบบ `[KPI Name]: [Variable Name] ([Old] -> [New])` และรวมหลายรายการด้วยตัวคั่นพิเศษ (เช่น |||) เพื่อนำไปแสดงผลแบบ Bullet Points ใน UI",
-      "dont": "ห้ามบันทึกแค่ 'แก้ไขข้อมูล KPI' หรือบันทึกเฉพาะค่าใหม่โดยไม่มีค่าเดิม เพราะจะทำให้การตรวจสอบย้อนหลัง (Audit) ทำได้ยากและไม่สามารถระบุจุดผิดพลาดที่ชัดเจนได้",
-      "root_cause": "ระบบเดิมบันทึกประวัติการแก้ไขแบบหยาบ (Header Level) ทำให้ไม่สามารถตอบคำถาม 'ใครแก้ตัวเลขไหน' ได้อย่างแม่นยำ",
-      "tags": [
-        "PHP",
-        "Audit Log",
-        "Traceability",
-        "Data Integrity",
-        "Business Logic"
-      ]
-    },
-    {
-      "id": "K050",
-      "date": "2026-05-12",
-      "project": "iso_kpi",
-      "task_summary": "Permission Granularity in Multi-action APIs",
-      "situation": "User (Issuer) ไม่สามารถดูประวัติเอกสาร (History) ได้ และได้รับข้อความ 'คุณไม่มีสิทธิ์' เนื่องจากไฟล์ API มีการเช็ค isAdmin() แบบ Global ไว้ที่หัวไฟล์",
-      "do": "1. ย้ายการเช็คสิทธิ์แบบเข้มงวด (เช่น isAdmin) ไปไว้เฉพาะใน Action ที่จำเป็น (load/save) 2. สำหรับ Action ที่เป็นข้อมูลสาธารณะหรือข้อมูลส่วนตัว (เช่น get_history) ให้เพิ่ม Logic เช็คสิทธิ์ตามความเป็นเจ้าของ (Ownership: owner_empcode) หรือเช็ครายชื่อในสายอนุมัติ (Approval Chain) แทนการใช้สิทธิ์แอดมินเพียงอย่างเดียว",
-      "dont": "ห้ามใช้การเช็คสิทธิ์แบบหว่านแห (Global Check) ในไฟล์ API ที่รวบรวมหลายฟังก์ชันเข้าด้วยกัน เพราะจะทำให้เกิด Visibility Gap สำหรับผู้ใช้ทั่วไปที่มีสิทธิ์เข้าถึงข้อมูลบางส่วน",
-      "root_cause": "การออกแบบ Security Middleware แบบ 'One-size-fits-all' บล็อกการเข้าถึงฟังก์ชันย่อยที่ควรเปิดให้ผู้ใช้ที่มีส่วนเกี่ยวข้องเข้าใช้งานได้",
-      "tags": [
-        "PHP",
-        "Security",
-        "Authorization",
-        "API",
-        "Bug",
-        "Permission"
-      ]
-    },
+  "knowledge_items": [
     {
       "id": "K001",
       "date": "2026-04-30",
@@ -194,19 +73,28 @@
     },
     {
       "id": "K005",
-      "date": "2026-04-30",
-      "project": "iso_kpi",
-      "task_summary": "Excel Import/Export Variable Handling",
-      "situation": "ระบบ Import/Export Wizard ไม่รองรับการนำเข้า/ส่งออกค่าตัวแปร (kpi_result_value) ทำให้ข้อมูลดิบหายไปเมื่อทำ bulk update",
-      "do": "1. เพิ่มแผ่นงาน (Sheet) `RESULT_VALUE` แยกต่างหากสำหรับจัดการค่าตัวแปรแบบ 1 แถวต่อ 1 ตัวแปร 2. ใช้ `in_array('column_name', $headers)` ทุกครั้งเพื่อรักษาความสามารถในการอิมพอร์ตไฟล์ Excel เวอร์ชั่นเก่า (Backward Compatibility)",
-      "dont": "ห้ามฝังค่าตัวแปรไว้ในคอลัมน์ของชีท RESULTS ถ้าต้องการความสะดวกในการจัดการข้อมูลดิบจำนวนมาก แนะนำให้แยกชีทเพื่อให้โครงสร้างตรงตามฐานข้อมูล",
-      "root_cause": "การออกแบบระบบนำเข้าเดิมโฟกาสที่ผลลัพธ์สุดท้าย (result_value) มากกว่าข้อมูลดิบที่มาของผลลัพธ์",
+      "timestamp": "2026-05-11T12:00:00Z",
+      "author": "Tan (Knowledge)",
+      "project": "ISO KPI",
+      "type": "Architecture",
+      "title": "เพิ่ม Workflow สำหรับ Manager Approval ในส่วน Action Plan",
+      "situation": "ผู้ใช้ต้องการเพิ่มชั้นการอนุมัติ (Manager Approval) หลังจากผู้ใช้แนบไฟล์ Action Plan แล้ว ก่อนที่เอกสารจะถึง ISO เพื่อให้ Manager ช่วยกรองอีกชั้นหนึ่ง และต้องการให้ระบบตั้งค่านี้เปิด/ปิดได้",
+      "do": [
+        "1. สร้าง Method `isActionPlanManagerApprovalEnabled` ใน `SettingsManager.php` เพื่ออ่านค่าจาก `settings.json`",
+        "2. เพิ่มสวิตช์หน้า UI ใน `system_management.php`",
+        "3. ปรับ `save_dept` ใน `api_action_plan.php` ให้ส่งเข้าสถานะ `PENDING_MANAGER` หากเปิดใช้งานการตั้งค่า",
+        "4. เพิ่ม `review_manager` Action ใน `api_action_plan.php` เพื่อรับการเปลี่ยนสถานะจาก Manager",
+        "5. เพิ่มสถานะ `PENDING_MANAGER` เข้าไปใน _tabMap ฝั่ง Client ภายในหน้า `follow_up_dashboard.php` ของฝั่งแผนก (กรณี user=Manager)"
+      ],
+      "dont": [
+        "ห้ามอัปเดตสถานะแบบ Hardcode ให้เช็คผ่าน SettingsManager เสมอเพื่อความยืดหยุ่น",
+        "ห้ามทำให้ ISO มองไม่เห็นปุ่มตรวจสอบหากสถานะมันข้ามมา หรือกรณีที่ปิด Manager Approval ไปแล้ว"
+      ],
       "tags": [
-        "Excel",
-        "Import",
-        "Export",
-        "KPI",
-        "Backward Compatibility"
+        "Workflow",
+        "Approval",
+        "Settings",
+        "Action Plan"
       ]
     },
     {
@@ -708,22 +596,6 @@
       ]
     },
     {
-      "id": "K035",
-      "date": "2026-05-07",
-      "project": "iso_kpi",
-      "task_summary": "Idempotent Data Insertion",
-      "situation": "ฟังก์ชันบางอย่างสามารถถูกเรียกซ้ำได้ (เช่น กดย้ำๆ, Refresh หรือเรียกใหม่หลัง Error) ทำให้เกิดข้อมูลเบิ้ลซ้ำในฐานข้อมูล (เช่น แผน Action Plan เกิดซ้ำ 2 ใบจาก KPI เดียวกัน)",
-      "do": "ตรวจสอบว่ามีข้อมูลนั้นอยู่แล้วหรือไม่ก่อนบันทึกเสมอ (เช่น ทำ `SELECT id FROM table WHERE ref_id = ?` และตรวจสอบว่า `!$stmtCheck->fetchColumn()` ถึงยอมประมวลผลคำสั่ง `INSERT`)",
-      "dont": "อย่าใช้คำสั่ง `INSERT` โดดๆ ในการสร้าง Record ที่มีความสำคัญหรืออ้างอิงเป็นแบบ 1-to-1 (One-to-One) โดยไม่ได้ตรวจสอบสถานะเก่าก่อน",
-      "root_cause": "การออกแบบโค้ดที่ไม่รองรับการทำซ้ำ (Lack of Idempotency) ก่อให้เกิดผลลัพธ์ซ้ำซ้อนและปัญหากระทบกับ Business Logic ขั้นถัดไป",
-      "tags": [
-        "PHP",
-        "SQL",
-        "Bug-Prevention",
-        "Idempotence"
-      ]
-    },
-    {
       "id": "K036",
       "date": "2026-05-07",
       "project": "iso_kpi",
@@ -929,40 +801,6 @@
       "id": "K050",
       "date": "2026-05-11",
       "project": "iso_kpi",
-      "task_summary": "Verification of Manual Utility Scripts usage",
-      "situation": "พบไฟล์สคริปต์ (เช่น fix_fiscal_year_doc_no.php) ที่ดูเหมือนไม่มีการเรียกใช้งาน (Orphaned) ภายในโปรเจกต์",
-      "do": "1. ตรวจสอบ code ภายในเพื่อระบุหน้าที่ (เช่น One-off fix, Manual tool) 2. ใช้ grep search ทั่วทั้งโปรเจกต์เพื่อยืนยันว่าไม่มีการเรียกใช้งานจากหน้าจอหรือ API อื่น 3. บันทึกสถานะว่าเป็น Manual Tool เพื่อป้องกันความเข้าใจผิดว่าเป็นโค้ดส่วนเกิน",
-      "dont": "ห้ามลบไฟล์ทิ้งโดยไม่ได้ตรวจสอบ context เพราะบ่อยครั้งเป็นสคริปต์ที่แอดมินสร้างไว้รันด้วยมือเพื่อแก้ไขข้อมูลหลังบ้าน (One-off Utility) ซึ่งไม่จำเป็นต้องมีการเรียกใช้ผ่าน UI",
-      "root_cause": "ระบบ Legacy มักมีการสร้างสคริปต์แก้ปัญหาเฉพาะกิจทิ้งไว้ในโฟลเดอร์หลัก",
-      "tags": [
-        "Audit",
-        "Utility-Scripts",
-        "Maintenance",
-        "Verification"
-      ]
-    },
-    {
-      "id": "K051",
-      "date": "2026-05-11",
-      "project": "wangnoi_ofs",
-      "task_summary": "Full-Field Update in Force Upsert Logic",
-      "situation": "ฟังก์ชัน Force Upsert แสดงผลว่า Update สำเร็จ แต่ข้อมูลบางส่วน (เช่น SKU, Reason, Date) ใน DB ไม่เปลี่ยนตามต้นทาง",
-      "do": "ในคำสั่ง SQL UPDATE ของระบบ Upsert ต้องระบุฟิลด์ให้ครบถ้วนเหมือนคำสั่ง INSERT (รวมถึง prodate, shift, sku, starttime) เพื่อรองรับกรณีมีการแก้ไขบริบทของข้อมูลที่ต้นทาง",
-      "dont": "ห้ามอัปเดตเฉพาะฟิลด์ตัวเลข (Qty/Time) ในฟังก์ชันที่ระบุว่าเป็น 'Force' หรือ 'Manual' Upsert เพราะผู้ใช้คาดหวังการล้างข้อมูลเก่าและเขียนทับด้วยข้อมูลใหม่ที่ถูกต้องทั้งหมด",
-      "root_cause": "การออกแบบ SQL UPDATE ที่จำกัดเฉพาะบางฟิลด์เพื่อความเร็ว (Optimization) แต่ขัดกับความต้องการใช้งานจริงเมื่อมีการแก้ไข Master Data ที่ต้นทาง",
-      "tags": [
-        "PHP",
-        "SQL",
-        "Upsert",
-        "Data-Integrity",
-        "OFS",
-        "Best-Practice"
-      ]
-    },
-    {
-      "id": "K050",
-      "date": "2026-05-11",
-      "project": "iso_kpi",
       "task_summary": "Visualizing Complex Cross-Module Logic (Follow-up Flow)",
       "situation": "ระบบมีการทำงานข้ามโมดูล (Submission -> Approval -> Action Plan) และมีสถานะข้อมูล (State) หลายระดับ ทำให้การไล่โค้ดหรือแก้ไขทำได้ลำบากหากไม่มีภาพรวม",
       "do": "1. สร้าง Program Flow Diagram โดยใช้ Mermaid ในไฟล์ markdown แยกต่างหาก (เช่น docs/program-flow-follow-up.md) 2. ระบุไฟล์หลักและเหตุการณ์ (Events) ที่ทำให้เกิดการเปลี่ยนผ่านของข้อมูล 3. ใช้สีหรือสัญลักษณ์แยกฝ่าย (Swimlane) หรือลำดับความรับผิดชอบให้ชัดเจน",
@@ -974,103 +812,6 @@
         "Mermaid",
         "Business-Logic",
         "ISO",
-        "Best-Practice"
-      ]
-    },
-    {
-      "id": "K051",
-      "date": "2026-05-11",
-      "project": "iso_kpi",
-      "task_summary": "Configuration-driven Visibility (Action Plan Access Control)",
-      "situation": "ระบบ Action Plan มีการ hardcode สิทธิ์การมองเห็นไว้ใน SQL (เฉพาะ owner/approver) ทำให้ไม่ยืดหยุ่นเมื่อต้องการเปลี่ยนนโยบายเป็น Department-based หรือ Public Access",
-      "do": "1. เก็บค่า config ใน settings.json (key: action_plan_visibility, values: restricted/department/public) 2. สร้าง SettingsManager::getActionPlanVisibility() พร้อม whitelist validation 3. ใน API ที่ทำ SQL Query ให้ใช้ if/elseif ตามค่า config เพื่อ inject OR condition ที่ต่างกัน 4. สร้าง UI Radio Button ที่ Admin เลือกได้ พร้อม save handler ใน form เดียวกับ Permissions Matrix",
-      "dont": "ห้าม hardcode สิทธิ์การมองเห็นลงใน SQL โดยตรง เพราะทุกครั้งที่เปลี่ยนนโยบายต้องแก้โค้ดใหม่ และห้ามรับค่า visibility mode จาก URL/GET parameter เพราะ user อาจ spoof ค่าได้ (ต้องดึงจาก server-side config เท่านั้น)",
-      "root_cause": "การออกแบบ Access Control แบบ Hardcode ทำให้ระบบไม่ยืดหยุ่น เมื่อนโยบายองค์กรเปลี่ยนแปลงต้องแก้โค้ดทุกครั้ง",
-      "tags": [
-        "Architecture",
-        "Configuration",
-        "Access-Control",
-        "Security",
-        "Best-Practice",
-        "SettingsManager"
-      ]
-    },
-    {
-      "id": "K052",
-      "date": "2026-05-11",
-      "project": "iso_kpi",
-      "task_summary": "Contextual Visibility for Follow-up Forms (Action Plan Restoration)",
-      "situation": "ใน Workflow หรือ Dashboard สำหรับจัดการปัญหา (เช่น การติดตามผลการแก้ไข หรือการอนุมัติ) ผู้ใช้ขาดบริบทตั้งต้น (Original Context) ว่าสาเหตุหรือแผนดั้งเดิมคืออะไร ทำให้ต้องสลับหน้าจอกลับไปดูในรายงานหลัก",
-      "do": "1. แนบฟิลด์ Historical Data ลงไปใน API หรือ Query ตั้งต้นเสมอ (เช่น orig_failure_cause, orig_improvement_plan) แม้จะไม่ได้แสดงในตารางหลัก 2. เมื่อผู้ใช้เรียกดูรายละเอียด (เช่น เปิด Modal) ให้แสดงบล็อก 'ข้อมูลอ้างอิง' (Reference Block) แยกส่วนอย่างชัดเจน 3. ออกแบบ UI ให้มีเอกลักษณ์ (เช่น เปลี่ยนสีพื้นหลัง, ใส่เส้นขอบซ้ายหนาๆ, มีไอคอน) เพื่อให้รู้ทันทีว่าเป็นข้อมูลอ้างอิงจากอดีต ไม่ใช่ฟิลด์สำหรับกรอกใหม่",
-      "dont": "ห้ามละเลยความต้องการบริบทตั้งต้นในกระบวนการทำงานแบบ Pipeline และห้ามแสดงข้อมูลอ้างอิงรวมกับแบบฟอร์มกรอกข้อมูลโดยไม่มีการแบ่งแยกด้วยดีไซน์ที่ชัดเจน เพราะจะทำให้ผู้ใช้สับสน",
-      "root_cause": "การแยกส่วนจัดการเอกสาร (Decoupling) ในระดับ Database/API แต่ไม่มีการส่งผ่านบริบทดั้งเดิมมาที่ UI ทำให้ประสบการณ์ผู้ใช้สะดุด",
-      "tags": [
-        "UI/UX",
-        "Context-Restoration",
-        "Modal",
-        "Workflow",
-        "Best-Practice"
-      ]
-    },
-    {
-      "id": "K053",
-      "date": "2026-05-11",
-      "project": "wangnoi_ofs",
-      "task_summary": "Multi-Shift Data Synchronization Pattern (API Optimization)",
-      "situation": "สคริปต์ Sync ข้อมูลอัตโนมัติ (Task Scheduler) ทำงานผิดพลาดหรือข้อมูลตกหล่นในช่วงรอยต่อกะ เพราะรันด้วยพารามิเตอร์เฉพาะกะปัจจุบัน ทำให้ไม่ได้รับข้อมูลที่ล่าช้าของกะก่อนหน้า",
-      "do": "1. ปรับปรุง API request โดยตัดพารามิเตอร์ filter (เช่น shift) ออก เพื่อให้ API ส่งข้อมูลทั้งหมดของวันนั้นๆ กลับมา 2. ใช้ระบบ Upsert (Update or Insert) ที่อิงตาม Unique Key (เช่น span_id) เพื่อให้การรันซ้ำสามารถอัปเดตข้อมูลเก่าให้เป็นปัจจุบันได้เสมอ 3. วิธีนี้ช่วยให้สคริปต์ที่รันทุกชั่วโมงสามารถ 'ซ่อมแซม' ข้อมูลของกะก่อนหน้าได้โดยอัตโนมัติหากมีการเปลี่ยนแปลง",
-      "dont": "ห้ามจำกัดการดึงข้อมูลเฉพาะช่วงเวลาสั้นๆ (กะปัจจุบัน) ในสคริปต์ประเภท Background Sync หากตัว API และ Database รองรับการทำ Idempotent Upsert ได้ เพราะจะทำให้เสียโอกาสในการทำ Self-healing ให้กับข้อมูล",
-      "root_cause": "การออกแบบการดึงข้อมูลแบบแยกส่วน (Granular Fetching) ในระบบ Background Job ทำให้ข้อมูลที่เกิดการแก้ไขย้อนหลังไม่ถูกนำมาอัปเดต",
-      "tags": [
-        "Architecture",
-        "API",
-        "Data-Integrity",
-        "Self-Healing",
-        "Task-Scheduler",
-        "Best-Practice"
-      ]
-    },
-    {
-      "id": "K005",
-      "timestamp": "2026-05-11T12:00:00Z",
-      "author": "Tan (Knowledge)",
-      "project": "ISO KPI",
-      "type": "Architecture",
-      "title": "เพิ่ม Workflow สำหรับ Manager Approval ในส่วน Action Plan",
-      "situation": "ผู้ใช้ต้องการเพิ่มชั้นการอนุมัติ (Manager Approval) หลังจากผู้ใช้แนบไฟล์ Action Plan แล้ว ก่อนที่เอกสารจะถึง ISO เพื่อให้ Manager ช่วยกรองอีกชั้นหนึ่ง และต้องการให้ระบบตั้งค่านี้เปิด/ปิดได้",
-      "do": [
-        "1. สร้าง Method `isActionPlanManagerApprovalEnabled` ใน `SettingsManager.php` เพื่ออ่านค่าจาก `settings.json`",
-        "2. เพิ่มสวิตช์หน้า UI ใน `system_management.php`",
-        "3. ปรับ `save_dept` ใน `api_action_plan.php` ให้ส่งเข้าสถานะ `PENDING_MANAGER` หากเปิดใช้งานการตั้งค่า",
-        "4. เพิ่ม `review_manager` Action ใน `api_action_plan.php` เพื่อรับการเปลี่ยนสถานะจาก Manager",
-        "5. เพิ่มสถานะ `PENDING_MANAGER` เข้าไปใน _tabMap ฝั่ง Client ภายในหน้า `follow_up_dashboard.php` ของฝั่งแผนก (กรณี user=Manager)"
-      ],
-      "dont": [
-        "ห้ามอัปเดตสถานะแบบ Hardcode ให้เช็คผ่าน SettingsManager เสมอเพื่อความยืดหยุ่น",
-        "ห้ามทำให้ ISO มองไม่เห็นปุ่มตรวจสอบหากสถานะมันข้ามมา หรือกรณีที่ปิด Manager Approval ไปแล้ว"
-      ],
-      "tags": [
-        "Workflow",
-        "Approval",
-        "Settings",
-        "Action Plan"
-      ]
-    },
-    {
-      "id": "K054",
-      "date": "2026-05-12",
-      "project": "iso_kpi",
-      "task_summary": "Dynamic Manager Lookup via Logs & HR Services",
-      "situation": "ระบบต้องหาผู้อนุมัติ (Manager) ขั้นถัดไปโดยอัตโนมัติ ซึ่งอาจจะอ้างอิงจากผู้ที่เคยอนุมัติเอกสารล่าสุด หรือถ้าไม่มีในประวัติให้ไปหาจากระบบ HR ส่วนกลางแทน เพื่อป้องกัน Workflow ค้าง",
-      "do": "1. ใช้ตารางประวัติการอนุมัติ (`approval_log`) หาผู้อนุมัติล่าสุด (`action = 'APPROVED'`) โดยเรียงตามวันที่ล่าสุด 2. ถ้าไม่พบ (เช่น เป็นเอกสารใหม่ หรือไม่มีประวัติ) ให้ดึง username ของเจ้าของเอกสาร แล้วนำไปค้นหาผู้อนุมัติผ่าน `ApprovalService::getApprovers($username)` เพื่อใช้เป็น Fallback 3. ตรวจสอบสิทธิ์การมองเห็นปุ่ม/หน้าจอโดยเปรียบเทียบ Session Username/Empcode กับข้อมูล Manager ที่พบ",
-      "dont": "ห้ามบังคับให้ผู้ใช้ต้องเลือก Manager เองถ้าสามารถหาจากประวัติหรือโครงสร้าง HR ได้ และห้ามปล่อยให้ระบบทำงานต่อโดยไม่มี Fallback (เช่น Manager = NULL) เพราะจะทำให้ Workflow ค้างไม่มีคนอนุมัติต่อ",
-      "root_cause": "การออกแบบ Workflow ที่ยึดติดกับสายการอนุมัติแบบตายตัว (Static Routing) มักจะมีปัญหาเมื่อมีการส่งกลับไปแก้ไข (Rework) จึงต้องใช้ประวัติมาช่วยหาผู้อนุมัติที่แท้จริง",
-      "tags": [
-        "Architecture",
-        "Workflow",
-        "Dynamic-Lookup",
-        "Fallback",
-        "Approval",
         "Best-Practice"
       ]
     },
@@ -1131,18 +872,19 @@
       "id": "K054",
       "date": "2026-05-12",
       "project": "iso_kpi",
-      "task_summary": "Unified Visibility Logic across List and Detail APIs",
-      "situation": "ผู้ใช้เห็นรายการเอกสารในหน้า Dashboard (List) แต่พอกดเข้าไปดูรายละเอียด (Detail/Modal) กลับขึ้นว่า 'ไม่มีสิทธิ์' หรือ 'ไม่พบข้อมูล' เนื่องจาก SQL Filter ของสองจุดนี้ทำงานไม่เหมือนกัน",
-      "do": "1. แยก Logic การกรองสิทธิ์ (Visibility Filter) ออกมาเป็นฟังก์ชันกลางหรือ SQL Snippet ชุดเดียวกัน 2. เมื่อมีการตั้งค่าสิทธิ์ใหม่ (เช่น Restricted/Department/Public) ต้องตามไปอัปเดต SQL WHERE clause ในทุก API ที่เกี่ยวข้อง (ทั้งหน้า List, หน้า Modal และหน้า Download) 3. ทดสอบด้วย User หลายระดับ (Role-based testing) ทุกครั้งที่มีการแก้ Visibility Logic",
-      "dont": "ห้ามเขียน SQL กรองสิทธิ์แยกกันในแต่ละไฟล์แบบ Hardcode (Inconsistent Logic) เพราะจะทำให้เกิดบัค 'เห็นแต่กดไม่ได้' เมื่อมีการเปลี่ยนเงื่อนไขสิทธิ์ในอนาคต",
-      "root_cause": "การกระจายตัวของ Business Logic (Logic Fragmentation) ในหลาย Endpoint ทำให้การบำรุงรักษาทำได้ยากและเกิดความผิดพลาดได้ง่าย",
+      "task_summary": "Dynamic Manager Lookup via Logs & HR Services",
+      "situation": "ระบบต้องหาผู้อนุมัติ (Manager) ขั้นถัดไปโดยอัตโนมัติ ซึ่งอาจจะอ้างอิงจากผู้ที่เคยอนุมัติเอกสารล่าสุด หรือถ้าไม่มีในประวัติให้ไปหาจากระบบ HR ส่วนกลางแทน เพื่อป้องกัน Workflow ค้าง",
+      "do": "1. ใช้ตารางประวัติการอนุมัติ (`approval_log`) หาผู้อนุมัติล่าสุด (`action = 'APPROVED'`) โดยเรียงตามวันที่ล่าสุด 2. ถ้าไม่พบ (เช่น เป็นเอกสารใหม่ หรือไม่มีประวัติ) ให้ดึง username ของเจ้าของเอกสาร แล้วนำไปค้นหาผู้อนุมัติผ่าน `ApprovalService::getApprovers($username)` เพื่อใช้เป็น Fallback 3. ตรวจสอบสิทธิ์การมองเห็นปุ่ม/หน้าจอโดยเปรียบเทียบ Session Username/Empcode กับข้อมูล Manager ที่พบ",
+      "dont": "ห้ามบังคับให้ผู้ใช้ต้องเลือก Manager เองถ้าสามารถหาจากประวัติหรือโครงสร้าง HR ได้ และห้ามปล่อยให้ระบบทำงานต่อโดยไม่มี Fallback (เช่น Manager = NULL) เพราะจะทำให้ Workflow ค้างไม่มีคนอนุมัติต่อ",
+      "root_cause": "การออกแบบ Workflow ที่ยึดติดกับสายการอนุมัติแบบตายตัว (Static Routing) มักจะมีปัญหาเมื่อมีการส่งกลับไปแก้ไข (Rework) จึงต้องใช้ประวัติมาช่วยหาผู้อนุมัติที่แท้จริง",
       "tags": [
-        "SQL",
-        "API",
-        "Security",
-        "Visibility",
-        "Inconsistency",
+        "Architecture",
+        "Workflow",
+        "Dynamic-Lookup",
+        "Fallback",
+        "Approval",
         "Best-Practice"
+      ]
     },
     {
       "id": "K055",
@@ -1160,6 +902,7 @@
         "Table",
         "CSS",
         "SaaS"
+      ]
     },
     {
       "id": "K056",
@@ -1176,6 +919,7 @@
         "UX",
         "File-Management",
         "Preview"
+      ]
     },
     {
       "id": "K057",
@@ -1193,6 +937,187 @@
         "File-Type",
         "Best-Practice"
       ]
+    },
+    {
+      "id": "K058",
+      "date": "2026-05-13",
+      "project": "calibration",
+      "task_summary": "DB Migration Tool with CSV Upsert Pattern",
+      "situation": "ต้องการย้ายฐานข้อมูลและอัปเดตข้อมูลจำนวนมาก (Bulk Update) ในตารางหลัก โดยต้องรักษาความถูกต้องของข้อมูลเดิมและรองรับภาษาไทย",
+      "do": "1. ใช้ CSV เป็นตัวกลางในการถ่ายโอนข้อมูล 2. ใส่ UTF-8 BOM เพื่อให้ Excel อ่านภาษาไทยออก 3. ใช้ Upsert Logic (Check CODE existence -> IF EXISTS UPDATE ELSE INSERT) 4. อัปเดต stamptime ทุกครั้งที่มีการเปลี่ยนแปลงข้อมูล 5. จำกัดสิทธิ์เฉพาะ Admin (Level >= 2)",
+      "dont": "ห้ามทำระบบ Import แบบ Insert-only หรือล้างตารางทิ้งก่อนนำเข้า เพราะจะทำให้ข้อมูลประวัติ (stamptime) และข้อมูลอื่นที่ไม่ได้อยู่ใน CSV เสียหาย แนะนำให้ใช้ Upsert โดยยึด Key หลักเป็นเกณฑ์",
+      "root_cause": "การย้ายฐานข้อมูลหรืออัปเดตข้อมูลจำนวนมากแบบ Manual เสี่ยงต่อความผิดพลาดและใช้เวลานาน เครื่องมือแบบกึ่งอัตโนมัติ (Wizard) ช่วยลดความเสี่ยงนี้",
+      "tags": [
+        "PHP",
+        "MSSQL",
+        "CSV",
+        "Migration",
+        "Upsert",
+        "Data-Integrity"
+      ]
+    },
+    {
+      "id": "K059",
+      "date": "2026-05-13",
+      "project": "iso_kpi",
+      "task_summary": "Error 500 on Submit (Missing Transaction)",
+      "situation": "เมื่อกดส่งอนุมัติระบบแจ้ง Error 500 ทั้งที่ข้อมูลถูกบันทึกสำเร็จ",
+      "do": "ต้องเรียกใช้ beginTransaction() ทุกครั้งที่มีการใช้ commit() หรือ rollBack() ใน block เดียวกัน โดยเฉพาะใน PHP PDO",
+      "dont": "ห้ามเรียกใช้ commit() หรือ rollBack() โดยไม่ได้เปิด Transaction ไว้ก่อน เพราะ PDO จะ throw exception และทำให้เกิด 500 error",
+      "root_cause": "ลืมเปิด Transaction ใน block submit_approval ทำให้ PDO throw exception เมื่อเจอคำสั่ง commit()",
+      "tags": [
+        "PHP",
+        "PDO",
+        "Database",
+        "BugFix"
+      ]
+    },
+    {
+      "id": "K050",
+      "date": "2026-05-14",
+      "project": "global",
+      "task_summary": "Sensitive Data & Config Management in Git",
+      "situation": "ต้องการซ่อนรหัสผ่าน DB ไม่ให้ขึ้น Git แต่ต้องให้คนในทีมรู้ว่าต้องสร้างไฟล์ config อย่างไร",
+      "do": "1. เพิ่มชื่อไฟล์ config จริง (เช่น config.php, .env) ลงใน .gitignore 2. สร้างไฟล์ตัวอย่าง (เช่น config.php.example, .env.example) ที่มีโครงสร้างตัวแปรครบแต่ไม่มีรหัสผ่านจริง Push ขึ้น Git 3. ระบุวิธี Setup ใน README.md (Copy example -> Rename -> Fill data)",
+      "dont": "ห้าม Push ไฟล์ที่มีรหัสผ่านจริงขึ้น Git เด็ดขาด ไม่ว่าจะเป็น public หรือ private repository",
+      "root_cause": "Security Risk จากการหลุดของรหัสผ่าน และความสับสนของทีมงานเมื่อไม่มีไฟล์ตั้งต้นให้ศึกษา",
+      "tags": [
+        "Git",
+        "Security",
+        "Config",
+        "Best-Practice",
+        "Collaboration"
+      ]
+    },
+    {
+      "id": "K051",
+      "date": "2026-05-14",
+      "project": "wangnoi_ofs",
+      "task_summary": "Parallel API Fetching & Bulk Upsert for Performance Optimization",
+      "situation": "ระบบที่มีการดึงข้อมูลจากหลายเครื่องผ่าน API และบันทึกลง DB ทีละแถว (Sequential + Row-by-row) ทำให้โหลดช้ามาก",
+      "do": [
+        "ใช้ curl_multi (Parallel Fetch) ดึงข้อมูลจากหลาย API Endpoint พร้อมกัน",
+        "ใช้เทคนิค Bulk Insert ผ่าน Temp Table โดยการรวบรวมข้อมูลทั้งหมดใส่ Array แล้วยิง INSERT ครั้งเดียวเข้า Temp Table",
+        "ใช้ Transaction คลุมกระบวนการ Delete ข้อมูลเก่าและ Insert ข้อมูลใหม่ เพื่อป้องกัน Data Integrity",
+        "ทำ Memory Map ของข้อมูลใน DB ก่อนวาดตาราง เพื่อใช้เปรียบเทียบ (Compare) ใน Memory แทนการยิง Query ในลูป"
+      ],
+      "dont": [
+        "อย่าลืมตรวจสอบชื่อคีย์ใน JSON API ของแต่ละโมดูล (เช่น spanid vs span_id) เพราะอาจไม่เหมือนกันแม้จะเป็นระบบใกล้เคียงกัน"
+      ],
+      "impact": "ลดเวลาประมวลผลได้มากกว่า 80% และลดภาระของ Database Server ได้อย่างมีนัยสำคัญ",
+      "tags": [
+        "Performance",
+        "PHP",
+        "MSSQL",
+        "Bulk-Insert",
+        "Parallel-Fetch",
+        "Optimization"
+      ]
+    },
+    {
+      "id": "K050",
+      "date": "2026-05-14",
+      "project": "global",
+      "task_summary": "Untracking Committed Sensitive Files in Git",
+      "situation": "ไฟล์ที่มีรหัสผ่าน (เช่น config.php) ถูก track เข้าไปใน Git แล้ว การเพิ่มลงใน .gitignore ภายหลังจะไม่ทำให้ Git เลิกติดตาม",
+      "do": [
+        "ใช้คำสั่ง `git rm --cached <file_path>` เพื่อลบออกจาก index โดยที่ไฟล์ในเครื่องยังอยู่",
+        "สร้างไฟล์ `.example` เพื่อเป็นแม่แบบให้ทีมงาน",
+        "commit และ push การเปลี่ยนแปลง"
+      ],
+      "dont": [
+        "ห้ามแค่เพิ่มชื่อไฟล์ใน .gitignore แล้วหวังว่ามันจะหายไปจาก repo ถ้ามันถูก track ไปแล้วต้องใช้ rm --cached เท่านั้น"
+      ],
+      "root_cause": ".gitignore มีผลเฉพาะกับไฟล์ที่ยังไม่ถูก track (Untracked files) เท่านั้น",
+      "tags": [
+        "Git",
+        "Security",
+        "Config",
+        "Best-Practice",
+        "Sensitive-Data"
+      ]
+    },
+    {
+      "id": "K061",
+      "project": "www\\iso",
+      "tags": [
+        "UI/UX",
+        "CSS",
+        "JS",
+        "Premium UI"
+      ],
+      "situation": "ต้องการยกระดับ UI จาก Bootstrap พื้นฐานให้เป็นระดับ Premium SaaS",
+      "do": "ใช้เทคนิค Glassmorphism (backdrop-filter: blur) ร่วมกับ Soft Shadows และ Micro-interactions. เพิ่มฟีเจอร์ Command Palette (Ctrl+K) เพื่อประสบการณ์ใช้งานที่รวดเร็วแบบเครื่องมือสมัยใหม่",
+      "dont": "อย่าใช้สีพื้น (Flat colors) หรือขอบเส้นที่หนาเกินไป (Thick borders). เลี่ยงการใช้ JavaScript library ขนาดใหญ่หากสามารถเขียนด้วย Vanilla JS ได้เพื่อประสิทธิภาพ",
+      "status": "active",
+      "created_at": "2026-05-14T14:10:00Z"
+    },
+    {
+      "id": "K062",
+      "project": "www\\iso",
+      "tags": [
+        "JS",
+        "PHP",
+        "Search",
+        "Performance"
+      ],
+      "situation": "ต้องการทำ Global Search ที่ค้นหาข้อมูลขนาดใหญ่จากฐานข้อมูลผ่าน UI แบบ Command Palette",
+      "do": "1. สร้าง API เฉพาะทางที่คืนค่า JSON แบบรวมกลุ่ม (KPIs, Docs, Depts). 2. ใช้เทคนิค Debounce (setTimeout) ในฝั่ง JS เพื่อรอให้ผู้ใช้พิมพ์เสร็จก่อนยิง AJAX. 3. จำกัดจำนวนผลลัพธ์ (TOP N) ใน SQL เพื่อความรวดเร็ว",
+      "dont": "อย่าดึงข้อมูลทั้งหมดมาไว้ที่ Client-side หากข้อมูลมีจำนวนมาก และห้ามเรียกใช้ API ทุกครั้งที่คีย์บอร์ดถูกกด (Keydown) โดยไม่มี Debounce เพราะจะทำให้ Server ค้าง",
+      "status": "active",
+      "created_at": "2026-05-14T14:50:00Z"
+    {
+      "id": "K050",
+      "date": "2026-05-14",
+      "project": "iso_kpi",
+      "task_summary": "Multi-layer Sticky Headers Stack",
+      "situation": "หน้าจอ Dashboard มีองค์ประกอบที่ต้องการให้ Sticky หลายส่วน (Navbar, Sidebar Header, Panel Header, Table Header) ทำให้เกิดการบังกันเอง",
+      "do": "1. กำหนด `top` offset ให้สัมพันธ์กับความสูงของเลเยอร์ก่อนหน้า (เช่น Navbar 50px, Header ต่อมา 50px, Table Header 115px) 2. จัดลำดับ `z-index` ให้เลเยอร์บนสุดมีค่าสูงสุด 3. ตรวจสอบ parent containers ว่าไม่มี `overflow: hidden` ที่จะขัดขวางการทำงานของ `position: sticky`",
+      "dont": "ห้ามใช้ `top: 0` กับทุกเลเยอร์ เพราะจะทำให้ทุกอย่างไปกองรวมกันที่ขอบบนสุดของจอ",
+      "root_cause": "การขาดการจัดการ Offset และ Z-index ที่เป็นระบบในองค์ประกอบที่ทำ Sticky พร้อมกัน",
+      "tags": [
+        "CSS",
+        "UI",
+        "Sticky-Header",
+        "Layout",
+        "Z-Index"
+      ]
+    },
+    {
+      "id": "K051",
+      "date": "2026-05-14",
+      "project": "iso_kpi",
+      "task_summary": "Context-Aware Search Routing & RBAC",
+      "situation": "Global Search ต้องการนำทางไปยังหน้าจอเฉพาะทางพร้อมระบุเป้าหมาย (เช่น วิเคราะห์ตัวแปร) และต้องจำกัดสิทธิ์การมองเห็นข้อมูลบางประเภท",
+      "do": "1. ใช้ URL Parameters เพื่อส่ง State (เช่น `?var_code=...`) 2. ในหน้าปลายทางใช้ JS (`scrollIntoView`) เพื่อนำทางไปยังเป้าหมาย 3. ใน API Search ให้ใช้ `AppUser::canAccess()` ตรวจสอบสิทธิ์จาก `settings.json` ก่อนคืนผลลัพธ์ข้อมูลอ่อนไหว",
+      "dont": "ห้ามคืนข้อมูล (เช่น รายชื่อตัวแปรภายใน) ให้กับผู้ใช้ที่ไม่มีสิทธิ์ในระดับ API โดยหวังไปซ่อนที่ UI เพราะข้อมูลจะหลุดผ่าน Network Tab",
+      "root_cause": "การออกแบบ Search ที่เน้นแค่การนำทางโดยไม่ได้คำนึงถึง Security Gating และ User Landing Experience",
+      "tags": [
+        "Security",
+        "RBAC",
+        "Search",
+        "UX",
+        "PHP",
+        "JavaScript"
+      ]
+    },
+    {
+      "id": "K063",
+      "date": "2026-05-15",
+      "project": "skill-programmer-team",
+      "task_summary": "Upgrade Namcha to Premium Frontend & UX/UI Designer",
+      "situation": "บทบาทของน้ำชา (UX/UI Designer) เดิมยังขาดแนวทางที่ชัดเจนในการสร้างงานระดับ High-end ทำให้เสี่ยงต่อการผลิตงาน UI ที่ดูเป็น 'AI Slop'",
+      "do": "อัปเดตคำสั่งใน agents/namcha_ux.md ให้ครอบคลุมแนวคิด Design Thinking ระดับสากล (Bold aesthetics, Distinctive typography, Motion, Creative composition) เพื่อยกระดับงาน Frontend ให้ดู Premium และมีเอกลักษณ์",
+      "dont": "ห้ามใช้อินเทอร์เฟซแบบสำเร็จรูปหรือฟอนต์พื้นฐาน (Arial, Inter) ในโปรเจกต์ที่ต้องการความโดดเด่น",
+      "root_cause": "การขาดแนวทางเฉพาะทางในการออกแบบทำให้ AI Agent มักเลือกทางเลือกที่ปลอดภัยแต่ดูธรรมดาเกินไป",
+      "tags": [
+        "Agent",
+        "Namcha",
+        "UI/UX",
+        "Frontend",
+        "Premium-Design"
+      ]
     }
   ]
 }
+

@@ -9,10 +9,9 @@
 > **สำคัญ:** ตรวจสอบ Execution Plan ของแตงกวาก่อนเสมอ — ถ้า plan ระบุ tech stack อื่น ให้ใช้ตาม plan
 > ถ้า plan ไม่ได้ระบุ ให้ใช้ default stack ด้านล่าง
 
-- **Backend:** PHP 7 (AppServ + Apache)
-- **Database:** Microsoft SQL Server (MSSQL) — ไม่ใช่ MySQL ต้องใช้ `sqlsrv_*` functions หรือ PDO ที่ config สำหรับ MSSQL
-- **Frontend:** HTML, CSS, JavaScript (Vanilla เป็นหลัก)
-- **Deploy:** Local AppServ หรือ Server IT องค์กร
+- **Tech Stack:** PHP, Python, JavaScript, HTML/CSS, SQL (ตามที่ระบุใน Global GEMINI.md)
+- **Database:** Microsoft SQL Server (MSSQL) — **Default สำหรับงานบริษัท**, MySQL, SQLite หรืออื่นๆ ตามที่แผนระบุ
+- **Deploy:** Local (AppServ), Server IT องค์กร หรือ Cloud ตามความเหมาะสม
 
 ## วิธีการทำงาน
 1. **เริ่มทำงาน:** พิมพ์หัวข้อ `### 💻 น้องบอส (Dev) ลงมือเขียนโค้ด`
@@ -39,6 +38,7 @@
    - [ ] ถ้ามี query ใหม่ — ตรวจว่าเป็น MSSQL syntax (TOP ไม่ใช่ LIMIT, GETDATE() ไม่ใช่ NOW())
    - [ ] ถ้ามี variable ใหม่ — ตรวจว่า initialize ก่อนใช้งาน (ห้าม += ตัวแปรเปล่า)
    - [ ] ถ้าแก้ฟังก์ชันที่เอฟบอกว่ามี caller อื่น — ตรวจว่า caller ยังทำงานได้
+   - [ ] **Check Code Size:** ไฟล์ที่แก้ยังไม่เกิน 800 บรรทัด (ถ้าเกินให้แจ้งหมูและผู้ใช้เพื่อแผนการแตก module)
 
    ⚠️ ถ้า Pre-flight ไม่ผ่าน → แก้ก่อนส่งหมู อย่าหวังว่าหมูจะจับได้
    ⚠️ ถ้าหมูพบว่าบอสไม่ทำ Pre-flight → หมูจะปฏิเสธ review ส่งกลับมาทำใหม่

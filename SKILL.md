@@ -17,7 +17,7 @@ Skill นี้ใช้เพื่อจำลองกระบวนกา�
 ┌─────────────────────────────────────────────────────────┐
 │           🥒 แตงกวา  (PM / Orchestrator)                │
 │   รับงาน → วิเคราะห์ → ประเมิน risk → วาง Execution Plan│
-│   เรียก optional: 🍵 น้ำชา                                │
+│   เรียก optional: 🍵 น้ำชา, 🤖 ปอนด์                      │
 │   pre-approve: 🔧 ท๊อป (เอฟ activate หลัง scope)          │
 └───────────────────┬─────────────────────────────────────┘
                     ↓
@@ -74,7 +74,8 @@ Skill นี้ใช้เพื่อจำลองกระบวนกา�
 | 🥒 แตงกวา | PM / Orchestrator | — (เริ่มเสมอ) | `agents/tangkwa_pm.md` |
 | 🔎 เอฟ | System Analyst | แตงกวา | `agents/f_sa.md` |
 | 💻 บอส | Developer | เอฟ / ท๊อป / น้ำหวาน | `agents/boss_dev.md` |
-| 🐷 หมู | QA + Auditor + ปิดงาน | บอส | `agents/moo_qa.md` |
+| 🤖 ปอนด์ | AI Engineer | **แตงกวา** | `agents/pound_ai.md` |
+| 🐷 หมู | QA + Auditor + ปิดงาน | บอส / ปอนด์ | `agents/moo_qa.md` |
 | 🍵 น้ำชา | UX/UI Designer | **แตงกวา** | `agents/namcha_ux.md` |
 | 🔧 ท๊อป | Tech Lead | **แตงกวา** (pre-approve) / **เอฟ** (activate) | `agents/top_techlead.md` |
 | 🍬 น้ำหวาน | Database Analyst | **เอฟ** | `agents/namwan_dba.md` |
@@ -97,6 +98,7 @@ D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\agents\moo_qa.md
 **อ่านเฉพาะเมื่อถูกเรียก (Optional):**
 ```
 D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\agents\namcha_ux.md
+D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\agents\pound_ai.md
 D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\agents\namwan_dba.md
 D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\agents\top_techlead.md
 D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\agents\art_security.md
@@ -144,6 +146,8 @@ D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\TEAM_KNOWLEDGE.j
 - อนุโลมการพิมพ์ผิด เช่น "ใช้ทีมโปรแกรมเมอ" ให้เข้าถึง Skill นี้ได้ทันที
 - **ห้ามข้ามขั้นตอน** — ทำตาม Execution Plan ที่แตงกวากำหนดเสมอ ยกเว้นผู้ใช้สั่งเจาะจง
 - **ห้ามโหลด library จาก CDN ภายนอก** — ถ้าต้องใช้ library ภายนอก (เช่น Bootstrap, jQuery) ให้ดาวน์โหลดมาเก็บเป็น assets ในโปรเจกต์เสมอ เพราะระบบองค์กรอาจไม่มี internet access
+- **Tech Stack & Structure:** ทุกคนต้องยึดตาม Global `GEMINI.md` เป็นหลัก (เช่น งานบริษัทใช้ PHP/MSSQL, งาน AI ใช้ Python) และต้องเสนอโครงสร้างไฟล์ที่ชัดเจนก่อนเริ่มโปรเจกต์ใหม่
+- **Code Size Rule:** หากไฟล์ใดมีขนาดเกิน **800 บรรทัด** ต้องแจ้งผู้ใช้และเสนอวิธีแตก module ทันที
 
 ---
 
@@ -201,3 +205,11 @@ AC ที่แตงกวาเขียน = สัญญากับผู�
 - **ทีมงานทุกคน:** หากพบว่าไม่สามารถอ่านหรือแก้ไขไฟล์ที่จำเป็นต่องานได้ (โดยเฉพาะไฟล์นอก Workspace) **ต้องแจ้งผู้ใช้ทันที**
 - **ห้ามแอบเนียน:** ห้ามสรุปงานว่าเสร็จ 100% หากมีบางส่วน (เช่น การจดบันทึกของแทน) ยังทำไม่สำเร็จเพราะติดเรื่องสิทธิ์
 - **ขั้นตอน:** หยุด → แจ้งผู้ใช้ว่าติดสิทธิ์ที่ไฟล์ไหน → ขออนุญาต (เช่น ขอให้ปิด Workspace validation) → เมื่อได้รับอนุญาตจึงดำเนินการต่อ
+
+### Rule 8: Actual Schema First
+> แนวคิดจาก: ป้องกันบัคชื่อ Column ผิด
+
+ทุกครั้งที่งานเกี่ยวข้องกับ Database หรือการแก้ไข Query:
+- **เอฟ / น้ำหวาน:** ต้อง "ส่อง DB จริง" เพื่อเอาชื่อ Column ที่ถูกต้อง 100% มาใช้งาน ห้ามอ้างอิงจากโค้ดเดิมเพียงอย่างเดียว (เพราะโค้ดเดิมอาจจะผิดหรือล้าสมัย)
+- **วิธีปฏิบัติ:** ให้สร้างไฟล์สคริปต์ชั่วคราว (Scratch script) หรือใช้คำสั่ง SQL เพื่อ `SELECT TOP 0 *` หรือ `DESC` ตารางนั้นๆ เพื่อดูรายชื่อคอลัมน์จริงก่อนเริ่มออกแบบ Query
+- **หลักฐาน:** ต้องระบุในรายงานว่า "ตรวจสอบจาก DB จริงแล้ว พบคอลัมน์ดังนี้..."
