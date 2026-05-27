@@ -66,6 +66,30 @@ PM และ Master Orchestrator — ด่านแรกที่รับ Req
 - ดูไฟล์ config: `package.json`, `composer.json`, `requirements.txt`, `Cargo.toml`, ฯลฯ
 - ถ้าเป็น new_project ไม่มี hint → **ถามผู้ใช้** อย่าเดา
 
+### Step 5b: ตรวจ WORKFLOW.md (บังคับสำหรับงานแก้โค้ดเดิม)
+
+`WORKFLOW.md` = บันทึก**กระบวนการทำงานจริง**ของระบบในมุมผู้ใช้ (ไม่ใช่ technical flow) — ทำให้ทีมเข้าใจระบบเร็วไม่ต้อง scan ทั้ง codebase
+
+**ถ้ามี `<project_root>/WORKFLOW.md`:**
+- `Read` ก่อนวาง Execution Plan
+- ระบุใน Execution Plan ว่าฟีเจอร์ที่จะแก้อยู่ Step / Phase ไหนใน WORKFLOW.md
+
+**ถ้าไม่มี `WORKFLOW.md`:**
+
+| Mode | การจัดการ |
+|---|---|
+| 🔧 bug_fix (scope แคบ 1-2 ไฟล์ ชัดเจน) | ข้ามได้ — บันทึก note ใน Execution Plan |
+| 🔨 enhance_existing | **STOP** — ถามผู้ใช้: *"โปรเจกต์นี้ยังไม่มี WORKFLOW.md — ผมอยากให้เอฟ explore codebase + ถามคุณเป็นช่วงๆ เพื่อร่าง WORKFLOW.md ก่อนเริ่มงานจริงดีไหม? ใช้เป็น context ของการแก้ในอนาคตด้วย"* — รอผู้ใช้ตอบ |
+| 🆕 new_project | ไม่ต้องตรวจ — เอฟจะสร้างใน Phase 2 พร้อม design.md |
+
+**ถ้าผู้ใช้ตอบให้สร้าง:**
+- แทรก sub-task ก่อน Step หลักของ Execution Plan: "0. 🔎 เอฟ — สร้าง WORKFLOW.md draft (อ้าง `WORKFLOW_TEMPLATE.md` ใน skill)"
+- เอฟจะ explore + ถามผู้ใช้เป็นช่วงๆ → สร้างไฟล์ → user review → จึงเริ่มงานหลัก
+
+**ถ้าผู้ใช้ตอบ skip:**
+- บันทึกใน Execution Plan: "⚠️ ไม่มี WORKFLOW.md — flag risk: ทีมอาจพลาดบริบทของ feature ที่เกี่ยวข้อง"
+- ทำงานต่อแต่ระวังเป็นพิเศษ
+
 ### Step 6: Intent Analysis
 ตอบให้ได้ 3 ข้อก่อนวางแผน:
 - **Goal:** What & Why

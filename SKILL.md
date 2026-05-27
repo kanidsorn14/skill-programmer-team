@@ -40,7 +40,9 @@ Skill นี้ทำงานบน Claude Code ดังนั้น agent ท
 |---|---|
 | Knowledge Base | `./TEAM_KNOWLEDGE.json` |
 | Agent definitions | `./agents/<name>.md` |
+| WORKFLOW Template | `./WORKFLOW_TEMPLATE.md` (อ้างเมื่อสร้าง WORKFLOW.md ใหม่ในโปรเจกต์ผู้ใช้) |
 | Project docs (ของผู้ใช้) | `./docs/` ของโปรเจกต์ผู้ใช้ — ไม่ใช่ของ Skill |
+| Project WORKFLOW (ของผู้ใช้) | `WORKFLOW.md` ที่ root ของโปรเจกต์ผู้ใช้ |
 
 แตงกวาต้อง resolve path เต็มจาก Skill directory ก่อนสั่ง Read
 
@@ -171,6 +173,11 @@ Skill นี้ทำงานบน Claude Code ดังนั้น agent ท
 ./TEAM_KNOWLEDGE.json
 ```
 
+**WORKFLOW Template (เอฟอ่านเมื่อต้องสร้าง WORKFLOW.md ใหม่ในโปรเจกต์ผู้ใช้):**
+```
+./WORKFLOW_TEMPLATE.md
+```
+
 ---
 
 ## Escalation Path
@@ -285,8 +292,17 @@ AC ที่แตงกวาเขียน = สัญญากับผู�
 เมื่อสร้างโปรเจกต์ใหม่ (`new_project`):
 - **แตงกวา:** ต้องสร้าง **Requirement Doc** (user stories + success metrics) ก่อน Execution Plan
 - **น้ำชา (ถ้ามี UI):** ต้องสร้าง **Wireframe / User Flow** ก่อน aesthetic plan
-- **เอฟ:** ต้องสร้าง **Design Doc** (file structure + data model + API contract) ก่อนส่งบอส
+- **เอฟ:** ต้องสร้าง **Design Doc** + **WORKFLOW.md** (กระบวนการทำงานในมุมผู้ใช้) ก่อนส่งบอส
 - **หมู:** ต้องสร้าง **Test Plan** (test pyramid: unit / integration / e2e) ก่อนเริ่ม code
+
+### Rule 11: WORKFLOW.md = First Read (กฎสำหรับงานแก้โค้ดเดิม)
+
+`WORKFLOW.md` ที่ root ของโปรเจกต์ผู้ใช้ = บันทึกกระบวนการทำงานในมุมผู้ใช้ (ไม่ใช่ technical flow)
+- **แตงกวา:** ทุก task บนโปรเจกต์เดิม → ต้องตรวจว่ามี `WORKFLOW.md` หรือไม่
+- **ไม่มี + Mode = enhance_existing:** STOP — เสนอผู้ใช้ให้เอฟสร้าง draft ก่อนเริ่มงานจริง
+- **มีอยู่:** ทุกคนในทีมต้อง `Read` ก่อนเริ่ม + ระบุใน Execution Plan ว่าฟีเจอร์ที่จะแก้อยู่ Step/Phase ไหน
+- **เอฟ:** ผู้รับผิดชอบหลักในการ create/update — อัปเดตทุกครั้งที่ flow / gate / role / permission เปลี่ยน
+- **หมู:** เพิ่มใน DoD — ถ้า behavior เปลี่ยนแต่ `WORKFLOW.md` ไม่ update → reject กลับเอฟ
 
 ---
 

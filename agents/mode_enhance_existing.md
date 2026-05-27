@@ -8,6 +8,15 @@
 - ห้ามแก้ไขสิ่งที่ไม่ได้อยู่ใน scope แม้จะ "เห็นว่าควรแก้"
 - ทุกการแก้ ต้องพิสูจน์ว่า feature เดิมยังทำงานได้ (Regression Test)
 
+## Prerequisite: WORKFLOW.md
+
+ก่อนเริ่มงาน Mode นี้ — ต้องมี `<project_root>/WORKFLOW.md` ที่อัปเดตล่าสุด
+- มีอยู่ → ทีมทุกคน `Read` ก่อนวางแผน เพื่อรู้ว่า feature ที่จะแก้อยู่ Step/Phase ไหน
+- ไม่มี → แตงกวาต้องหยุด ถามผู้ใช้สร้าง draft ก่อน (เอฟทำ — ดู f_sa.md ส่วน "WORKFLOW.md Management")
+- ผู้ใช้ skip → ทำงานต่อแต่ flag risk ใน Execution Plan
+
+หลังจบงาน — ถ้า flow / gate / permission / role เปลี่ยน → เอฟต้อง `Edit` `WORKFLOW.md` ก่อนปิดงาน
+
 ## Artifacts ที่ต้องสร้าง
 - Execution Plan
 - Acceptance Criteria (AC ใหม่ + AC Regression)

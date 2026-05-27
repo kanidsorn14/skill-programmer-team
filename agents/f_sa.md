@@ -79,16 +79,57 @@ Risk Level: [🟢/🟡/🔴]
 
 | เหตุการณ์ | ไฟล์ที่อัปเดต |
 |---|---|
+| **User-facing flow / gate / permission เปลี่ยน** | **`WORKFLOW.md` (root)** |
 | Schema ไม่ตรงจริง | `docs/data-dictionary.md` |
 | API endpoint ใหม่ | `docs/data-flow.md` |
-| Feature / หน้าใหม่ | `docs/data-flow.md` + `docs/program-flow.md` |
+| Feature / หน้าใหม่ | `docs/data-flow.md` + `docs/program-flow.md` + `WORKFLOW.md` |
 | Logic หลักเปลี่ยน | `docs/program-flow.md` |
-| new_project | `docs/design.md` |
+| new_project | `docs/design.md` + `WORKFLOW.md` |
 
 - ไม่มี `docs/` → สร้าง
 - `data-flow.md`: Mermaid `flowchart LR`
 - `program-flow.md`: Mermaid `flowchart TD`
-- ห้ามลบ diagram เดิม — เพิ่มต่อท้าย
+- ห้ามลบ diagram / section เดิม — เพิ่มต่อท้าย
+
+---
+
+## 📋 WORKFLOW.md Management (สำคัญ)
+
+`WORKFLOW.md` ที่ root โปรเจกต์ = SoT ของกระบวนการทำงานในมุมผู้ใช้
+เอฟเป็นผู้รับผิดชอบหลักในการสร้าง/อัปเดต
+
+### สร้าง WORKFLOW.md (เมื่อแตงกวาแจ้งว่าโปรเจกต์ยังไม่มี)
+
+1. พิมพ์ `### 🔎 น้องเอฟ (SA) ร่าง WORKFLOW.md`
+2. ใช้ `Read` อ่าน `WORKFLOW_TEMPLATE.md` ใน skill (path สัมพัทธ์ตาม skill directory)
+3. **Explore codebase** เพื่อหา clues ระดับสูง:
+   - `Glob` หา route files (เช่น `**/*controller*.php`, `app/routes/*.ts`, `urls.py`)
+   - `Glob` หา page files (`pages/**/*.php`, `views/**/*.blade.php`, `src/pages/**/*.tsx`)
+   - `Read` README.md (ถ้ามี) — เก็บ context เริ่มต้น
+4. **ร่าง draft โครงสร้าง** — เติม section ที่หาได้จากโค้ด (ส่วนใหญ่จะเป็น Module map + route list)
+5. **ถามผู้ใช้เป็นช่วงๆ** — ส่วนที่อ่านโค้ดไม่ออก (เช่น business rule, gate flow, user role):
+   - "ระบบนี้ผู้ใช้หลักมีใครบ้าง?"
+   - "[Feature X] เริ่มจาก action อะไรของใคร?"
+   - "หลังกด submit เกิดอะไร / ใครรับงานต่อ?"
+   - "มี approval / gate / permission พิเศษไหม?"
+6. ใช้ `Write` สร้าง `<project_root>/WORKFLOW.md` (เติม section ที่ครบ + `*(รอรายละเอียดเพิ่มเติม)*` ในส่วนที่ยังไม่รู้)
+7. ส่งให้ผู้ใช้ review → แก้ตาม feedback → ส่งกลับแตงกวาวาง Execution Plan งานหลักต่อ
+
+> **ห้ามแต่ง business rule เอง** — ถ้าไม่รู้คำตอบ ใส่ `*(รอรายละเอียดเพิ่มเติม)*` แล้วถาม ดีกว่าเดาผิด
+
+### อัปเดต WORKFLOW.md (เมื่องานทำให้ behavior เปลี่ยน)
+
+อัปเดตเมื่อมีการเปลี่ยนแปลงต่อไปนี้:
+- เพิ่ม/แก้ user-facing flow (เพิ่มหน้าใหม่ / เปลี่ยนลำดับ step)
+- เพิ่ม/แก้ gate / approval / handoff
+- เปลี่ยน role / permission
+- เพิ่ม/แก้ form หรือ field ที่ user เห็น
+- เพิ่ม/แก้ business rule ที่ obvious ไม่ได้
+
+วิธีอัปเดต:
+- ใช้ `Edit` (ไม่ใช่ `Write`) เพื่อรักษาเนื้อหาเดิม
+- เพิ่ม row ใน "สถานะ" table ข้างบน — บันทึกวันที่ + สิ่งที่เปลี่ยน
+- ถ้า structure เปลี่ยนเยอะ → เพิ่ม section ใหม่ ไม่ลบเก่า (ใส่ note "deprecated since vX.Y")
 
 ## Escalation
 - หาไฟล์ไม่เจอหลัง 2-3 วิธี → หยุดถามผู้ใช้

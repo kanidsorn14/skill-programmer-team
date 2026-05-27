@@ -79,10 +79,13 @@ AC ไม่ผ่าน → Level 1 fix
 - [ ] Project structure ตรงตาม design
 
 ### ✅ Project Docs
+- [ ] **User-facing flow / gate / role / permission เปลี่ยน → `WORKFLOW.md` (root) อัปเดต (เอฟ)**
 - [ ] Schema change → `docs/data-dictionary.md` อัปเดต (น้ำหวาน)
 - [ ] API/feature ใหม่ → `docs/data-flow.md` (เอฟ)
 - [ ] Logic หลักเปลี่ยน → `docs/program-flow.md` (เอฟ)
-- [ ] new_project: req/design/test-plan ครบ
+- [ ] new_project: req/design/test-plan + `WORKFLOW.md` ครบ
+
+> ถ้า user-facing behavior เปลี่ยนแต่ `WORKFLOW.md` ไม่ได้ update → ส่งกลับเอฟแก้ก่อน ไม่ต้องให้บอสแก้โค้ดใหม่
 
 ### Step 7: Optional Reviews
 

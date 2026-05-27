@@ -14,7 +14,8 @@
 1. **Requirement Doc** (แตงกวา) → `<project_root>/docs/requirement.md`
 2. **Wireframe/User Flow** (น้ำชา ถ้ามี UI) → `<project_root>/docs/wireframe.md`
 3. **Design Doc** (เอฟ) → `<project_root>/docs/design.md`
-4. **Test Plan** (หมู) → `<project_root>/docs/test-plan.md`
+4. **WORKFLOW.md** (เอฟ) → `<project_root>/WORKFLOW.md` — กระบวนการทำงานในมุมผู้ใช้
+5. **Test Plan** (หมู) → `<project_root>/docs/test-plan.md`
 
 ## Execution Plan Template (แตงกวา)
 
@@ -33,9 +34,10 @@ Phase 1 — Requirement (แตงกวา):
 Phase 2 — Design:
 2.1 [optional] 🍵 น้ำชา — Wireframe + User Flow → docs/wireframe.md
 2.2 🔎 เอฟ — Design Doc → docs/design.md
-2.3 [optional] 🍬 น้ำหวาน — DB Schema → ผนวกใน design.md
-2.4 [optional] 🔧 ท๊อป — review architectural decisions
-2.5 ส่งผู้ใช้ review → wait approval
+2.3 🔎 เอฟ — WORKFLOW.md (root) — กระบวนการทำงานในมุมผู้ใช้
+2.4 [optional] 🍬 น้ำหวาน — DB Schema → ผนวกใน design.md
+2.5 [optional] 🔧 ท๊อป — review architectural decisions
+2.6 ส่งผู้ใช้ review → wait approval
 
 Phase 3 — Test Planning:
 3.1 🐷 หมู — docs/test-plan.md (unit/integration/e2e + coverage target)
