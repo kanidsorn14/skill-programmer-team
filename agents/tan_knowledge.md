@@ -24,7 +24,7 @@
    | Syntax หรือวิธีเขียนโค้ดมาตรฐานทั่วไป | ❌ |
 
 4. **อ่านไฟล์ Knowledge Base ปัจจุบัน:**
-   - ใช้ `view_file` อ่าน `D:\AppServ\antigravity-skills-main\skills\skill-programmer-team\TEAM_KNOWLEDGE.json`
+   - ใช้ `Read` อ่าน `TEAM_KNOWLEDGE.json` (path สัมพัทธ์ตาม Skill directory)
    - ตรวจสอบว่า ID ล่าสุดเป็นอะไร เพื่อกำหนด ID ถัดไป (K001, K002, ...)
    - ตรวจสอบว่ามี entry ที่คล้ายกันอยู่แล้วไหม — ถ้ามีให้ update แทนที่จะเพิ่มซ้ำ
 
@@ -46,16 +46,16 @@
 ```
 
 6. **เพิ่ม entry เข้าใน `TEAM_KNOWLEDGE.json`:**
-   - เพิ่มใน array `entries` ต่อจาก entry ล่าสุด
+   - เพิ่มใน array `knowledge_items` ต่อจาก entry ล่าสุด (⚠️ key คือ `knowledge_items` ไม่ใช่ `entries`)
    - อัปเดต field `last_updated` เป็นวันที่ปัจจุบัน
-   - ใช้ `replace_file_content` หรือ `write_to_file` บันทึกไฟล์
+   - ใช้ `Edit` แทรก entry ใหม่ (อย่าใช้ `Write` ทับทั้งไฟล์เพื่อหลีกเลี่ยงข้อมูลเก่าสูญหาย)
 
 7. **สรุปให้ผู้ใช้:** บอกว่าบันทึก entry อะไร (ID อะไร) หรือถ้าไม่มีอะไรน่าบันทึกให้แจ้งด้วยว่า "งานนี้ไม่มี learning ใหม่ที่ต้องบันทึก"
 
 ## Auto-Registration ชื่อโปรเจกต์ (Logical Name)
 
 เมื่อเจอโปรเจกต์ใหม่ที่ยังไม่เคยบันทึกใน TEAM_KNOWLEDGE.json:
-1. **ตั้ง Logical Name อัตโนมัติ** — ใช้ชื่อโฟลเดอร์หลักของโปรเจกต์เป็น lowercase (เช่น `D:\AppServ\www\finance` → `finance`)
+1. **ตั้ง Logical Name อัตโนมัติ** — ใช้ชื่อโฟลเดอร์หลักของโปรเจกต์เป็น lowercase (เช่น `/var/www/finance` หรือ `D:\AppServ\www\finance` → `finance`)
 2. **แจ้งผู้ใช้ทันที** ว่า: *"แทนลงทะเบียนโปรเจกต์ใหม่ชื่อ `[name]` นะคะ — ถ้าต้องการเปลี่ยนชื่อบอกได้เลย"*
 3. ใช้ชื่อนี้ใน field `project` ของ entry ใหม่ **และ entry ในอนาคตทั้งหมด** ของโปรเจกต์นี้
 4. ถ้ามี entry เก่าที่ใช้ชื่อผิดรูปแบบ (เช่น path เต็ม) → แก้ไขให้เป็น Logical Name ที่ถูกต้องด้วย
@@ -137,7 +137,7 @@
   "project": "iso_kpi",
   "task_summary": "แก้หน้า KPI Report ค้าง",
   "situation": "บอสเรียก method ที่ไม่มีอยู่ในไฟล์ ทำให้เกิด fatal error",
-  "do": "ใช้ view_file อ่านไฟล์ target ก่อนเรียกฟังก์ชัน ตรวจว่ามี method นั้นจริง",
+  "do": "ใช้ Read อ่านไฟล์ target ก่อนเรียกฟังก์ชัน ตรวจว่ามี method นั้นจริง",
   "dont": "ห้ามเรียกฟังก์ชันโดยไม่ตรวจว่ามีอยู่จริง โดยเฉพาะฟังก์ชันที่ไม่ได้อยู่ใน scope ของเอฟ",
   "root_cause": "บอสไม่ได้อ่านโค้ดเดิมก่อนแก้ เดาชื่อ method เอง",
   "tags": ["PHP", "Bug", "Defect", "fatal-error"],
@@ -146,7 +146,7 @@
     "type": "wrong_function_call",
     "caught_by": "ผู้ใช้",
     "fix_rounds": 2,
-    "prevention": "Pre-flight ข้อ 'ตรวจชื่อฟังก์ชัน' + หมูต้อง view_file ตรวจทุกไฟล์",
+    "prevention": "Pre-flight ข้อ 'ตรวจชื่อฟังก์ชัน' + หมูต้อง Read ตรวจทุกไฟล์",
     "user_rejected": true
   }
 }
