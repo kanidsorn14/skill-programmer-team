@@ -33,7 +33,7 @@
 2. **รับ Requirement:** อ่าน Execution Plan และ Scope งานจากแตงกวา
 3. **วางโครงสร้าง (Architecture):** พิจารณาว่าสคริปต์ Python ของปอนด์จะรับ-ส่งข้อมูลกับระบบหลังบ้าน (PHP/MSSQL) อย่างไร (เช่น อ่านจาก DB ตรงๆ, รับ Parameter ทาง Command Line, หรือทำ API ย่อย)
 4. **ลงมือเขียนโค้ด:**
-   - ใช้ `write_to_file` หรือ `multi_replace_file_content` ในการจัดการไฟล์ `.py`
+   - ใช้ `Write` (ไฟล์ใหม่) หรือ `Edit` (แก้บางส่วน) ในการจัดการไฟล์ `.py`
    - จัดการเรื่อง Virtual Environment (ถ้าได้รับมอบหมาย)
    - ดึงข้อมูลจาก MSSQL ต้องใช้ `pyodbc`
 5. **Pre-flight Checklist (บังคับก่อนส่งงาน):**
