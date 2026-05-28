@@ -4,7 +4,7 @@ import { useState } from "react";
 import ContentCard, { ContentItem } from "@/components/ContentCard";
 import CreateModal from "@/components/CreateModal";
 import ContentDrawer from "@/components/ContentDrawer";
-import StatusBadge, { ContentStatus } from "@/components/StatusBadge";
+import { ContentStatus } from "@/components/StatusBadge";
 
 const MOCK_ITEMS: ContentItem[] = [
   {
@@ -20,7 +20,7 @@ const MOCK_ITEMS: ContentItem[] = [
   },
   {
     id: "2",
-    title: "Life Hack ทำงาน Work From Home ให้ได้ผล — Short",
+    title: "Life Hack ทำงาน Work From Home ให้ได้ผล",
     topic: "Work From Home",
     contentType: "short",
     status: "approved",
@@ -55,7 +55,7 @@ const MOCK_ITEMS: ContentItem[] = [
   },
   {
     id: "5",
-    title: "วิธีสร้าง Personal Brand — Short",
+    title: "วิธีสร้าง Personal Brand",
     topic: "Personal Branding",
     contentType: "short",
     status: "draft",
@@ -66,7 +66,7 @@ const MOCK_ITEMS: ContentItem[] = [
   },
   {
     id: "6",
-    title: "5 เครื่องมือฟรีสำหรับ Designer — Reel",
+    title: "5 เครื่องมือฟรีสำหรับ Designer",
     topic: "Design Tools",
     contentType: "reel",
     status: "rejected",
@@ -77,29 +77,44 @@ const MOCK_ITEMS: ContentItem[] = [
   },
 ];
 
-const COLUMNS: { status: ContentStatus; color: string }[] = [
-  { status: "draft", color: "border-gray-700" },
-  { status: "pending_review", color: "border-amber-700/50" },
-  { status: "approved", color: "border-emerald-700/50" },
-  { status: "generating", color: "border-blue-700/50" },
-  { status: "done", color: "border-purple-700/50" },
-  { status: "rejected", color: "border-red-900/50" },
+type Tab = { label: string; status: ContentStatus | "all" };
+
+const TABS: Tab[] = [
+  { label: "ทั้งหมด", status: "all" },
+  { label: "รอ Approve", status: "pending_review" },
+  { label: "Approved", status: "approved" },
+  { label: "วิดีโอ", status: "generating" },
+  { label: "เสร็จ", status: "done" },
+  { label: "Draft", status: "draft" },
+  { label: "Rejected", status: "rejected" },
 ];
+
+const TAB_ACTIVE_CLASS: Partial<Record<ContentStatus | "all", string>> = {
+  all: "border-blue-500 text-blue-400",
+  pending_review: "border-amber-500 text-amber-400",
+  approved: "border-emerald-500 text-emerald-400",
+  generating: "border-blue-500 text-blue-400",
+  done: "border-purple-500 text-purple-400",
+  draft: "border-gray-400 text-gray-300",
+  rejected: "border-red-500 text-red-400",
+};
 
 export default function Home() {
   const [items, setItems] = useState<ContentItem[]>(MOCK_ITEMS);
+  const [activeTab, setActiveTab] = useState<ContentStatus | "all">("all");
   const [showCreate, setShowCreate] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
 
   const handleCreate = (item: ContentItem) => {
     setItems((prev) => [item, ...prev]);
+    setActiveTab("pending_review");
   };
 
   const handleApprove = (id: string) => {
     setItems((prev) =>
       prev.map((i) => (i.id === id ? { ...i, status: "approved" as ContentStatus } : i))
     );
-    setSelectedItem((prev) => (prev && prev.id === id ? { ...prev, status: "approved" } : prev));
+    setSelectedItem((prev) => (prev?.id === id ? { ...prev, status: "approved" } : prev));
   };
 
   const handleReject = (id: string) => {
@@ -114,77 +129,113 @@ export default function Home() {
       prev.map((i) => (i.id === id ? { ...i, status: "generating" as ContentStatus } : i))
     );
     setSelectedItem(null);
-
     setTimeout(() => {
       setItems((prev) =>
         prev.map((i) =>
-          i.id === id ? { ...i, status: "done" as ContentStatus, videoUrl: "https://example.com/video/" + id } : i
+          i.id === id
+            ? { ...i, status: "done" as ContentStatus, videoUrl: "https://example.com/video/" + id }
+            : i
         )
       );
     }, 5000);
   };
 
+  const filteredItems =
+    activeTab === "all" ? items : items.filter((i) => i.status === activeTab);
+
   const pendingCount = items.filter((i) => i.status === "pending_review").length;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Topbar */}
-      <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm sticky top-0 z-30">
-        <div className="px-6 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-sm font-bold text-white">
+    <div className="min-h-screen flex flex-col bg-gray-950">
+      {/* Header */}
+      <header className="sticky top-0 z-30 bg-gray-950/95 backdrop-blur-sm border-b border-gray-800">
+        <div className="flex items-center justify-between px-4 h-14">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-xs font-bold text-white">
               C
             </div>
-            <span className="font-semibold text-gray-100">Content Studio</span>
+            <span className="font-semibold text-gray-100 text-sm">Content Studio</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-3 text-sm">
-              <span className="text-gray-500">{items.length} รายการ</span>
-              {pendingCount > 0 && (
-                <span className="bg-amber-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                  {pendingCount} รอ Approve
-                </span>
-              )}
-            </div>
-            <button
-              onClick={() => setShowCreate(true)}
-              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
-            >
-              + สร้าง Content
-            </button>
+          <div className="flex items-center gap-2">
+            {pendingCount > 0 && (
+              <button
+                onClick={() => setActiveTab("pending_review")}
+                className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold px-2.5 py-1 rounded-full"
+              >
+                ⏳ {pendingCount} รอ Approve
+              </button>
+            )}
           </div>
         </div>
-      </header>
 
-      {/* Kanban Board */}
-      <main className="flex-1 overflow-x-auto p-5">
-        <div className="flex gap-4 min-w-max h-full pb-4">
-          {COLUMNS.map((col) => {
-            const colItems = items.filter((i) => i.status === col.status);
+        {/* Tab Bar */}
+        <div className="flex overflow-x-auto gap-0 px-4 pb-0 scrollbar-hide">
+          {TABS.map((tab) => {
+            const count =
+              tab.status === "all"
+                ? items.length
+                : items.filter((i) => i.status === tab.status).length;
+            const isActive = activeTab === tab.status;
             return (
-              <div key={col.status} className="w-72 flex-shrink-0 flex flex-col">
-                <div className={`flex items-center justify-between mb-3 pb-3 border-b ${col.color}`}>
-                  <StatusBadge status={col.status} />
-                  <span className="text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded-full">
-                    {colItems.length}
+              <button
+                key={tab.status}
+                onClick={() => setActiveTab(tab.status)}
+                className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-3 text-sm border-b-2 transition-colors shrink-0 ${
+                  isActive
+                    ? TAB_ACTIVE_CLASS[tab.status] ?? "border-blue-500 text-blue-400"
+                    : "border-transparent text-gray-500 hover:text-gray-300"
+                }`}
+              >
+                {tab.label}
+                {count > 0 && (
+                  <span
+                    className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      isActive ? "bg-current/10 opacity-80" : "bg-gray-800 text-gray-500"
+                    }`}
+                    style={isActive ? { backgroundColor: "rgba(255,255,255,0.08)" } : {}}
+                  >
+                    {count}
                   </span>
-                </div>
-                <div className="space-y-3 flex-1">
-                  {colItems.length === 0 ? (
-                    <div className="text-center py-10 text-gray-700 text-sm border border-dashed border-gray-800 rounded-xl">
-                      ว่างอยู่
-                    </div>
-                  ) : (
-                    colItems.map((item) => (
-                      <ContentCard key={item.id} item={item} onOpen={setSelectedItem} />
-                    ))
-                  )}
-                </div>
-              </div>
+                )}
+              </button>
             );
           })}
         </div>
+      </header>
+
+      {/* Content List */}
+      <main className="flex-1 px-4 py-4 pb-28 space-y-3">
+        {filteredItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="text-4xl mb-3">📭</div>
+            <p className="text-gray-500 text-sm">ยังไม่มีรายการ</p>
+            <button
+              onClick={() => setShowCreate(true)}
+              className="mt-4 text-blue-400 text-sm underline underline-offset-2"
+            >
+              สร้าง Content แรก
+            </button>
+          </div>
+        ) : (
+          filteredItems.map((item) => (
+            <ContentCard key={item.id} item={item} onOpen={setSelectedItem} />
+          ))
+        )}
       </main>
+
+      {/* FAB */}
+      <div className="fixed bottom-6 right-4 z-30">
+        <button
+          onClick={() => setShowCreate(true)}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-semibold px-5 py-3.5 rounded-2xl shadow-lg shadow-blue-900/40 transition-all"
+        >
+          <span className="text-lg leading-none">+</span>
+          <span className="text-sm">สร้าง Content</span>
+        </button>
+      </div>
+
+      {/* Summary bar (bottom safe area) */}
+      <div className="fixed bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-gray-950 to-transparent pointer-events-none" />
 
       {showCreate && (
         <CreateModal onClose={() => setShowCreate(false)} onCreate={handleCreate} />
